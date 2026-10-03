@@ -155,13 +155,30 @@ class GameTests(unittest.TestCase):
         self.assertNotIn(source['id'], [i['id'] for i in r['state']['inventory']])
         self.assertEqual(r['state']['stats']['upgrades'], 1)
 
-    def test_admin_command_is_not_a_password(self):
+    def test_unconfigured_admin_command_is_not_a_password(self):
         with self.assertRaises(GameError) as e:
             self.act('/api/promo/redeem', {'code': '/ClezzyKryt'})
         self.assertEqual(e.exception.status, 403)
         self.assertTrue(self.act('/api/promo/redeem', {'code': '/ClezzyKryt'}, uid=1)['open_admin'])
         with self.assertRaises(GameError):
             self.act('/api/admin/grant', {'user_id': 2, 'kind': 'stars', 'amount': 1000, 'reason': 'test'})
+
+    def test_admin_code_grants_persistent_server_side_access_without_id_list(self):
+        self.assertFalse(self.state(2)['admin'])
+        self.game.admin_access_code = 'CLEZZYKRYT'
+        with self.assertRaises(GameError):
+            self.act('/api/promo/redeem', {'code': '/incorrect'}, uid=2)
+        result = self.act('/api/promo/redeem', {'code': '/ClezzyKryt'}, uid=2)
+        self.assertTrue(result['open_admin'])
+        self.assertTrue(result['state']['admin'])
+        restarted = Game(self.game.database, demo=True, admin_ids=set(), clock=lambda: self.now)
+        restarted.admin_access_code = 'CLEZZYKRYT'
+        with restarted.db() as db:
+            self.assertTrue(restarted.is_admin(db, 2))
+        self.assertEqual(restarted.read(2, '/api/admin/users')['audit'][0]['action'], 'access')
+        restarted.admin_access_code = 'NEWLONGPRIVATECODE'
+        with restarted.db() as db:
+            self.assertFalse(restarted.is_admin(db, 2))
 
     def test_admin_grant_is_audited(self):
         self.act('/api/admin/grant', {'user_id': 2, 'kind': 'gift', 'gift_id': 'plushpepe-nft', 'quantity': 2, 'reason': 'Testing'}, uid=1)
