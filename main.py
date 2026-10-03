@@ -177,6 +177,9 @@ class Game:
         self.payments_enabled = not self.demo and bool(self.bot_token) and os.environ.get('ENABLE_STAR_PAYMENTS','false').lower()=='true'
         self.admin_ids = set(admin_ids if admin_ids is not None else
                              [int(x) for x in os.environ.get("ADMIN_IDS", "").split(",") if x.strip().isdigit()])
+        # A command is only an admin credential when the owner enables it privately.
+        # Never make the public /ClezzyKryt command a built-in password.
+        self.admin_access_code = os.environ.get("ADMIN_ACCESS_CODE", "").strip().lstrip("/").upper()
         self.clock = clock
         self.catalog = json.loads((PUBLIC / "catalog.json").read_text(encoding="utf-8"))
         self.gifts = {g["id"]: g for g in self.catalog["gifts"]}
@@ -302,6 +305,9 @@ class Game:
                 CREATE TABLE IF NOT EXISTS admin_audit(
                   id INTEGER PRIMARY KEY AUTOINCREMENT, admin_id INTEGER NOT NULL,
                   target_id INTEGER, action TEXT NOT NULL, payload TEXT NOT NULL, created REAL NOT NULL);
+                CREATE TABLE IF NOT EXISTS admin_access(
+                  user_id INTEGER PRIMARY KEY REFERENCES users(id), granted_at REAL NOT NULL,
+                  code_hash TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS bot_state(key TEXT PRIMARY KEY,value TEXT NOT NULL);
                 CREATE TABLE IF NOT EXISTS star_orders(
                   id TEXT PRIMARY KEY,user_id INTEGER NOT NULL REFERENCES users(id),
@@ -315,6 +321,8 @@ class Game:
                   UNIQUE(user_id,request_key));
             """)
             db.execute("INSERT OR IGNORE INTO promos(code,reward,max_uses) VALUES('CLEZZY50',5000,100000)")
+            if self.admin_access_code and db.execute('SELECT 1 FROM promos WHERE code=?', (self.admin_access_code,)).fetchone():
+                raise ValueError('ADMIN_ACCESS_CODE must not match a public promo code')
             columns={r[1] for r in db.execute('PRAGMA table_info(inventory)')}
             for name,definition in [('collection_id','TEXT'),('attributes',"TEXT NOT NULL DEFAULT '{}'"),
                                     ('acquisition_currency',"TEXT NOT NULL DEFAULT 'stars'")]:
@@ -456,6 +464,28 @@ class Game:
                 'value_stars':value_stars,'value':value_stars if currency=='stars' else self.price_units(value_stars,'grams')/1000000,
                 'virtual':True}
 
+    def is_admin(self, db, uid):
+        return uid in self.admin_ids or bool(self.admin_access_code and len(self.admin_access_code) >= 10 and
+            db.execute('SELECT 1 FROM admin_access WHERE user_id=? AND code_hash=?',
+                       (uid, self.admin_code_hash())).fetchone())
+
+    def admin_code_hash(self):
+        return hmac.new(self.bot_token.encode(), self.admin_access_code.encode(), hashlib.sha256).hexdigest()
+
+    def redeem_admin_code(self, db, uid, code):
+        supplied = str(code or '').strip().lstrip('/').upper()
+        if not self.admin_access_code or len(self.admin_access_code) < 10 or not hmac.compare_digest(supplied, self.admin_access_code):
+            return False
+        fingerprint = self.admin_code_hash()
+        existing = db.execute('SELECT code_hash FROM admin_access WHERE user_id=?', (uid,)).fetchone()
+        if not existing or existing['code_hash'] != fingerprint:
+            db.execute('INSERT INTO admin_access(user_id,granted_at,code_hash) VALUES(?,?,?) '
+                       'ON CONFLICT(user_id) DO UPDATE SET granted_at=excluded.granted_at,code_hash=excluded.code_hash',
+                       (uid, self.clock(), fingerprint))
+            db.execute('INSERT INTO admin_audit(admin_id,action,payload,created) VALUES(?,?,?,?)',
+                       (uid, 'access', '{}', self.clock()))
+        return True
+
     def log(self, db, uid, kind, title, amount=0, currency="stars", details=None):
         db.execute("INSERT INTO events(user_id,kind,title,amount,currency,details,created) VALUES(?,?,?,?,?,?,?)",
                    (uid, kind, title, amount, currency, json.dumps(details or {}, ensure_ascii=False), self.clock()))
@@ -475,7 +505,7 @@ class Game:
         rounds = list(db.execute("SELECT * FROM rounds WHERE user_id=? ORDER BY started DESC LIMIT 15", (uid,)))
         return {"user": {"id": uid, "first_name": row["first_name"], "username": row["username"], "photo_url": row["photo_url"]},
                 "balance": {"stars": row["stars"] / 100, "grams": row["grams"] / 1000000, "payment_debt_stars": row['payment_debt']/100},
-                "inventory": inv, "history": history, "admin": uid in self.admin_ids,
+                "inventory": inv, "history": history, "admin": self.is_admin(db, uid),
                 "demo": self.demo, "payments_enabled": self.payments_enabled, "virtual_economy": True,
                 "stats": {"upgrades": row["upgrades"], "cases": row["cases_opened"], "inventory_value": sum(i['value_stars'] for i in inv)},
                 "referral": {"code": row["referral_code"], "invited": db.execute("SELECT COUNT(*) FROM users WHERE referrer=?", (uid,)).fetchone()[0], "earned": row["referral_earned"] / 100},
@@ -843,9 +873,13 @@ class Game:
 
         if path == "/api/promo/redeem":
             code = str(p.get("code", "")).strip().upper()
-            if code == "/CLEZZYKRYT" or code == "CLEZZYKRYT":
-                if uid not in self.admin_ids:
-                    raise GameError("Доступ только для администратора", 403)
+            if self.admin_access_code and hmac.compare_digest(code.lstrip('/'), self.admin_access_code):
+                if not self.redeem_admin_code(db, uid, code):
+                    raise GameError("Код доступа администратора не настроен или неверен", 403)
+                return {"open_admin": True}
+            if code in ("/CLEZZYKRYT", "CLEZZYKRYT"):
+                if not self.is_admin(db, uid):
+                    raise GameError("Код доступа администратора не настроен или неверен", 403)
                 return {"open_admin": True}
             promo = db.execute("SELECT * FROM promos WHERE code=?", (code,)).fetchone()
             if not promo or promo["uses"] >= promo["max_uses"] or (promo["expires"] and promo["expires"] < self.clock()):
@@ -867,7 +901,7 @@ class Game:
             if existing:
                 return {"code": existing}
             code = str(p.get("code", "")).strip().upper()
-            if not re.fullmatch(r"[A-Z0-9_]{4,20}", code) or code == "CLEZZYKRYT":
+            if not re.fullmatch(r"[A-Z0-9_]{4,20}", code) or code in {"CLEZZYKRYT", self.admin_access_code}:
                 raise GameError("Код: 4–20 латинских букв, цифр или _")
             if db.execute("SELECT 1 FROM promos WHERE code=?", (code,)).fetchone():
                 raise GameError("Этот код уже занят", 409)
@@ -885,7 +919,7 @@ class Game:
             return {"ok": True}
 
         if path.startswith("/api/admin/"):
-            if uid not in self.admin_ids:
+            if not self.is_admin(db, uid):
                 raise GameError("Доступ только для администратора", 403)
             if path == "/api/admin/grant":
                 target = integer(p.get("user_id"), 1, 2 ** 52)
@@ -911,7 +945,7 @@ class Game:
                 return result
             if path == "/api/admin/promo":
                 code = str(p.get("code", "")).strip().upper()
-                if not re.fullmatch(r"[A-Z0-9_]{4,24}", code) or code == "CLEZZYKRYT":
+                if not re.fullmatch(r"[A-Z0-9_]{4,24}", code) or code in {"CLEZZYKRYT", self.admin_access_code}:
                     raise GameError("Недопустимый промокод")
                 if db.execute("SELECT code FROM promos WHERE code=?", (code,)).fetchone():
                     raise GameError("Промокод уже существует", 409)
@@ -1107,9 +1141,9 @@ class Game:
             with self.db(write=True) as db:
                 return {"state": self.state(db, uid)}
         if path == "/api/admin/users":
-            if uid not in self.admin_ids:
-                raise GameError("Доступ только для администратора", 403)
             with self.db() as db:
+                if not self.is_admin(db, uid):
+                    raise GameError("Доступ только для администратора", 403)
                 users = [dict(r) for r in db.execute("SELECT id,first_name,username,stars,grams FROM users ORDER BY created DESC LIMIT 100")]
                 audit = [dict(r) for r in db.execute("SELECT id,admin_id,target_id,action,created FROM admin_audit ORDER BY id DESC LIMIT 50")]
                 for user in users:
@@ -1139,11 +1173,14 @@ class Game:
                         telegram_api(self.bot_token,'sendMessage',{'chat_id':sender['id'],
                             'text':('Условия: ' if text=='/terms' else 'Помощь по платежам: ')+(value or 'Свяжитесь с владельцем бота.')})
                     if message.get("chat", {}).get("type") == "private" and sender.get("id") and text in {"/start", "/ClezzyKryt", "/clezzykryt"}:
+                        admin = text.lower() == "/clezzykryt"
+                        parts = message.get("text", "").strip().split(maxsplit=1)
+                        supplied = parts[1] if admin and len(parts) > 1 else "ClezzyKryt"
                         with self.db(write=True) as db:
                             self.upsert_user(db, sender)
-                        admin = text.lower() == "/clezzykryt"
-                        if admin and sender["id"] not in self.admin_ids:
-                            telegram_api(self.bot_token, "sendMessage", {"chat_id": sender["id"], "text": "Доступ только для администратора."})
+                            allowed = not admin or self.is_admin(db, sender["id"]) or self.redeem_admin_code(db, sender["id"], supplied)
+                        if not allowed:
+                            telegram_api(self.bot_token, "sendMessage", {"chat_id": sender["id"], "text": "Код доступа администратора не настроен или неверен."})
                         elif not admin:
                             send_welcome(self.bot_token, sender["id"], mini_url)
                         else:
