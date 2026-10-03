@@ -1,0 +1,14 @@
+{
+  "name": "otongifts",
+  "version": "6.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "python3 tools/build_html.py",
+    "check": "node --check dist/boot.js && node --check dist/crash.js && node --check dist/app.js && node --check dist/demo.js && node --check dist/demo.browser.js && node --check dist/compat.js && node --check dist/catalog.js && node --check dist/assets.js && python3 tools/check_assets.py",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.13"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "checks": [
+    "OTON loading screen before auth",
+    "Games landing, Japan banner and game tiles",
+    "19 cases, images and case detail",
+    "Japan banner opens catalog case"
+  ],
+  "errors": [],
+  "failedResources": [],
+  "viewports": [
+    {
+      "section": "games",
+      "width": 320,
+      "actual": 320,
+      "viewport": 320,
+      "inter": true,
+      "broken": []
+    },
+    {
+      "section": "games",
+      "width": 360,
+      "actual": 360,
+      "viewport": 360,
+      "inter": true,
+      "broken": []
+    },
+    {
+      "section": "games",
+      "width": 390,
+      "actual": 390,
+      "viewport": 390,
+      "inter": true,
+      "broken": []
+    },
+    {
+      "section": "games",
+      "width": 430,
+      "actual": 430,
+      "viewport": 430,
+      "inter": true,
+      "broken": []
+    },
+    {
+      "section": "games",
+      "width": 768,
+      "actual": 768,
+      "viewport": 768,
+      "inter": true,
+      "broken": []
+    },
+    {
+      "section": "cases",
+      "width": 320,
+      "actual": 320,
+      "viewport": 320,
+      "broken": []
+    },
+    {
+      "section": "cases",
+      "width": 390,
+      "actual": 390,
+      "viewport": 390,
+      "broken": []
+    },
+    {
+      "section": "cases",
+      "width": 430,
+      "actual": 430,
+      "viewport": 430,
+      "broken": []
+    },
+    {
+      "section": "cases",
+      "width": 768,
+      "actual": 768,
+      "viewport": 768,
+      "broken": []
+    }
+  ],
+  "passed": true
+}

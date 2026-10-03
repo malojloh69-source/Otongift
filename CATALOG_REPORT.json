@@ -1,0 +1,53 @@
+{
+  "ordinary_gifts": 149,
+  "collections": 117,
+  "models": 7337,
+  "snapshot": 1790959801,
+  "unavailable": [],
+  "ownership": "virtual",
+  "prices": "Verified ordinary buyback bids where supplied, otherwise labelled game estimates; Scared Cat has a user-set virtual price of 20000 Stars (collectible 20025)",
+  "snapshot_iso": "2026-10-02T16:50:01+00:00",
+  "unavailable_sources": [
+    {
+      "url": "https://getgems.io/",
+      "status": 403,
+      "effect": "Live Getgems catalogue and owned NFT stock unavailable; no real NFTs are issued."
+    }
+  ],
+  "unsupported_upgrades": [
+    "Triple Meow",
+    "White Gilded"
+  ],
+  "currency_assets": {
+    "stars": "Telegram Web A original GoldStarFill.svg rendered losslessly at 512 px, transparent; uploaded raster file unavailable",
+    "grams": "Official TON Gram Diamond Mark, transparent RGBA"
+  },
+  "price_snapshot": {
+    "observed_at": "2026-10-02T19:07:27+00:00",
+    "retrieved_at": "2026-10-03T04:13:19.319519+00:00",
+    "source": "https://github.com/ssamy2/TelegramGiftsAssests/blob/main/gifts_api_response.json",
+    "sha256": "385e68d16f55b05008af3fb0e53e9979ed678940915f3a8368cab6c45e72e756",
+    "method": "payments.getStarGifts: stars / resell_min_stars",
+    "unconfirmed": [
+      "durovsglasses-nft",
+      "libertyfigure-nft"
+    ]
+  },
+  "collectible_case_rewards": 0,
+  "ordinary_prices": {
+    "verified_bid": 0,
+    "collection_floor_estimate": 114,
+    "collection_game_estimate": 2,
+    "unconfirmed_estimate": 32,
+    "user_set_game_price": 1
+  },
+  "currency_case_rewards": true,
+  "user_price_override": {
+    "gift_id": "scaredcat",
+    "price_stars": 20000,
+    "collectible_id": "scaredcat-nft",
+    "collectible_price_stars": 20025,
+    "case_weights_rebalanced": 9,
+    "is_market_quote": false
+  }
+}

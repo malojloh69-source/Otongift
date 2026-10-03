@@ -1,0 +1,293 @@
+{
+  "gifts": [
+    {
+      "slug": "ordinary-rose",
+      "name": "Rose",
+      "minted_nft": false,
+      "source_page": "https://smmacc.com/product/buy-tg-stars-gifts",
+      "image_url": "https://cdn.changes.tg/gifts/originals/5168103777563050263/Original.png",
+      "animation_url": "https://cdn.changes.tg/gifts/originals/5168103777563050263/Original.json",
+      "provenance": "third_party_mirror_fallback",
+      "image_sha256": "e06bd9ac6659f0cdb65b443ec72c317555de165ac292d271991ce0b8f991a65f",
+      "animation_sha256": "97d1ce2339c1fe746f1edaaf8a299faddd9f8941bb25cfcafb56779b896e3ff1"
+    },
+    {
+      "slug": "ordinary-heart",
+      "name": "Heart",
+      "minted_nft": false,
+      "source_page": "https://smmacc.com/product/buy-tg-stars-gifts",
+      "image_url": "https://cdn.changes.tg/gifts/originals/5170145012310081615/Original.png",
+      "animation_url": "https://cdn.changes.tg/gifts/originals/5170145012310081615/Original.json",
+      "provenance": "third_party_mirror_fallback",
+      "image_sha256": "befb04c978694d57f95c8271686d6d49cd4e3663df838d4992eeed3e57535a13",
+      "animation_sha256": "333ffd5b09fb2b34b885d6ba60e96727f958bc86185a17ca0439ae5700d3b9ea"
+    },
+    {
+      "slug": "ordinary-teddybear",
+      "name": "Teddy Bear",
+      "minted_nft": false,
+      "source_page": "https://smmacc.com/product/buy-tg-stars-gifts",
+      "image_url": "https://cdn.changes.tg/gifts/originals/5170233102089322756/Original.png",
+      "animation_url": "https://cdn.changes.tg/gifts/originals/5170233102089322756/Original.json",
+      "provenance": "third_party_mirror_fallback",
+      "image_sha256": "03a0006b695242f40f3df425de4ed11b2ad2f06a5046b88381288dc9fd65a7a2",
+      "animation_sha256": "6dda81db259910dbd3e317ff8d6e86c89b99b9e3c6739b61b51d5bb386fc1b80"
+    },
+    {
+      "slug": "ordinary-giftbox",
+      "name": "Gift Box",
+      "minted_nft": false,
+      "source_page": "https://smmacc.com/product/buy-tg-stars-gifts",
+      "image_url": "https://cdn.changes.tg/gifts/originals/5170250947678437525/Original.png",
+      "animation_url": "https://cdn.changes.tg/gifts/originals/5170250947678437525/Original.json",
+      "provenance": "third_party_mirror_fallback",
+      "image_sha256": "c867328d02aaeba04a3902e6b64862c8cffb494f166c770c6486c6f692ebc040",
+      "animation_sha256": "e856922c4b12b1382283d310ea6dc7162167e80d94b9a459f292cb59731fd373"
+    },
+    {
+      "slug": "deskcalendar",
+      "name": "Desk Calendars",
+      "minted_nft": false,
+      "source_page": "https://getgems.io/collection/EQBMcfMAZlMUr1W3X8kdEw3fJMUAaWH4-XcmE5R5RfFIY0E2",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQBMcfMAZlMUr1W3X8kdEw3fJMUAaWH4-XcmE5R5RfFIY0E2/RVFCTWNmTUFabE1VcjFXM1g4a2RFdzNmSk1VQWFXSDQtWGNtRTVSNVJmRklZMEUy.webp",
+      "animation_url": null,
+      "image_sha256": "6ff3cf33624c34dc1f5c372df772ebf1c011a77b27a87e5a3334e6bd94198761",
+      "provenance": "getgems_collection_customImage"
+    },
+    {
+      "slug": "candycane",
+      "name": "Candy Canes",
+      "minted_nft": false,
+      "source_page": "https://getgems.io/collection/EQDLM65t0shS7gZAg0lMltGHYhsU94PzsMJHhYibmRV7kdUs",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQDLM65t0shS7gZAg0lMltGHYhsU94PzsMJHhYibmRV7kdUs/RVFETE02NXQwc2hTN2daQWcwbE1sdEdIWWhzVTk0UHpzTUpIaFlpYm1SVjdrZFVz.webp",
+      "animation_url": null,
+      "image_sha256": "033b6aa5383e1c3f3bed86ab3c9e586f06368371f8eba3849bdd8f7c57c1cade",
+      "provenance": "getgems_collection_customImage"
+    },
+    {
+      "slug": "homemadecake",
+      "name": "Homemade Cakes",
+      "minted_nft": false,
+      "source_page": "https://getgems.io/collection/tonkinside-in-telegram",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQCefrjhCD2_7HRIr2lmwt9ZaqeG_tdseBvADC66833kBS3y/RVFDZWZyamhDRDJfN0hSSXIybG13dDlaYXFlR190ZHNlQnZBREM2NjgzM2tCUzN5.webp",
+      "animation_url": null,
+      "image_sha256": "22fc4477a55436a0a781a4be8336e770cbd205d8e3ab587bcc2b107125a99ddc",
+      "provenance": "getgems_collection_customImage"
+    },
+    {
+      "slug": "toybear-base",
+      "name": "Toy Bear (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQC1gud6QO8NdJjVrqr7qFBMO0oQsktkvzhmIRoMKo8vxiyL/EQBPYswE2MtAiSCBjX-tFKQmKuMx7TUbZdqcw08mSWqSCEdV",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQC1gud6QO8NdJjVrqr7qFBMO0oQsktkvzhmIRoMKo8vxiyL/RVFDMWd1ZDZRTzhOZEpqVnJxcjdxRkJNTzBvUXNrdGt2emhtSVJvTUtvOHZ4aXlM.webp",
+      "image_sha256": "e4bed0665a3ffa88a008cd8eb0602fd58d2d24039c1fb0b708f1945b01d0ff4b",
+      "animation_url": null
+    },
+    {
+      "slug": "toybear",
+      "name": "Toy Bear #46626",
+      "source_page": "https://getgems.io/collection/EQC1gud6QO8NdJjVrqr7qFBMO0oQsktkvzhmIRoMKo8vxiyL/EQBPYswE2MtAiSCBjX-tFKQmKuMx7TUbZdqcw08mSWqSCEdV",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQC1gud6QO8NdJjVrqr7qFBMO0oQsktkvzhmIRoMKo8vxiyL/eebd47439a16c716",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQC1gud6QO8NdJjVrqr7qFBMO0oQsktkvzhmIRoMKo8vxiyL/7ad463f41a101bb3",
+      "image_sha256": "930a952dea858f48ee4735eb2a598753203da121145f966cb8045c5bd808707a",
+      "animation_sha256": "7b33d42f716e351bb05b0417e1b944783f7e53d65ff419ee2133ba58ba3608bd",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    },
+    {
+      "slug": "scaredcat-base",
+      "name": "Scared Cat (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQATuUGdvrjLvTWE5ppVFOVCqU2dlCLUnKTsu0n1JYm9la10/EQBExWbW1GTCAHdOauYT-xL6zZFGO0JEvIGdwP8XE87GGwCL",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQATuUGdvrjLvTWE5ppVFOVCqU2dlCLUnKTsu0n1JYm9la10/RVFBVHVVR2R2cmpMdlRXRTVwcFZGT1ZDcVUyZGxDTFVuS1RzdTBuMUpZbTlsYTEw.webp",
+      "image_sha256": "64fb70c762feba919d13b5b8857662f8239cf1e573cd95cf1af26e1dd0ddab81",
+      "animation_url": null
+    },
+    {
+      "slug": "scaredcat",
+      "name": "Scared Cat #2571",
+      "source_page": "https://getgems.io/collection/EQATuUGdvrjLvTWE5ppVFOVCqU2dlCLUnKTsu0n1JYm9la10/EQBExWbW1GTCAHdOauYT-xL6zZFGO0JEvIGdwP8XE87GGwCL",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQATuUGdvrjLvTWE5ppVFOVCqU2dlCLUnKTsu0n1JYm9la10/d9e930631d0e0bd7",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQATuUGdvrjLvTWE5ppVFOVCqU2dlCLUnKTsu0n1JYm9la10/283f6f1839e6b7a4",
+      "image_sha256": "d40976eb69ae268b7e521b5d2e769b7b686f2af2925a9df76c2a437bf33a93fa",
+      "animation_sha256": "cb98cdf032cd181b0011b98934eb1a00930267c42b34bd9446bd5b869711f7f9",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    },
+    {
+      "slug": "lootbag-base",
+      "name": "Loot Bag (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQCE80Aln8YfldnQLwWMvOfloLGgmPY0eGDJz9ufG3gRui3D/EQDwAsc0zsOfswhfhThcuk7_VOTB64JWqpQtjIHDgAunuftv",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQCE80Aln8YfldnQLwWMvOfloLGgmPY0eGDJz9ufG3gRui3D/RVFDRTgwQWxuOFlmbGRuUUx3V012T2Zsb0xHZ21QWTBlR0RKejl1ZkczZ1J1aTNE.webp",
+      "image_sha256": "832c12df720b9e64e9f64310a43002fc0bc96df81d03cb0999ab9216041eb795",
+      "animation_url": null
+    },
+    {
+      "slug": "lootbag",
+      "name": "Loot Bag #1488",
+      "source_page": "https://getgems.io/collection/EQCE80Aln8YfldnQLwWMvOfloLGgmPY0eGDJz9ufG3gRui3D/EQDwAsc0zsOfswhfhThcuk7_VOTB64JWqpQtjIHDgAunuftv",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQCE80Aln8YfldnQLwWMvOfloLGgmPY0eGDJz9ufG3gRui3D/a6303ded7fb9e50a",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQCE80Aln8YfldnQLwWMvOfloLGgmPY0eGDJz9ufG3gRui3D/fd94ea723bf96f76",
+      "image_sha256": "4faae52ad1b3b7b4a6df73110e11805b0cc05c437144f059cc26b973c48bdb53",
+      "animation_sha256": "18ddb9bba4ae4d1a292417b491b0d6287cc42e332ba174c2f8f0965272ba53ab",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    },
+    {
+      "slug": "durovscap-base",
+      "name": "Durov’s Cap (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQD9ikZq6xPgKjzmdBG0G0S80RvUJjbwgHrPZXDKc_wsE84w/EQDeNtCi6m1HTKNrdfT0Bv4uIdsrkbLLT9VtDsbc5nzDk9Pn",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQD9ikZq6xPgKjzmdBG0G0S80RvUJjbwgHrPZXDKc_wsE84w/RVFEOWlrWnE2eFBnS2p6bWRCRzBHMFM4MFJ2VUpqYndnSHJQWlhES2Nfd3NFODR3.webp",
+      "image_sha256": "a71c4c2a85363b870b10da8f4496e930ac884191d77e85423c783931195a76c3",
+      "animation_url": null
+    },
+    {
+      "slug": "durovscap",
+      "name": "Durov’s Cap #1258",
+      "source_page": "https://getgems.io/collection/EQD9ikZq6xPgKjzmdBG0G0S80RvUJjbwgHrPZXDKc_wsE84w/EQDeNtCi6m1HTKNrdfT0Bv4uIdsrkbLLT9VtDsbc5nzDk9Pn",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQD9ikZq6xPgKjzmdBG0G0S80RvUJjbwgHrPZXDKc_wsE84w/b7ac031088ff2136",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQD9ikZq6xPgKjzmdBG0G0S80RvUJjbwgHrPZXDKc_wsE84w/67a2129dfaf6cd6c",
+      "image_sha256": "ab2eec05fb727365fbcf17110c8f74082ac1724b4de4e8742449dcc3dca0c948",
+      "animation_sha256": "86612f4bc1a74b42bc7916e7995d0c076772edf7772aa9a906023546e10186c7",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    },
+    {
+      "slug": "heartlocket-base",
+      "name": "Heart Locket (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQC4XEulxb05Le5gF6esMtDWT5XZ6tlzlMBQGNsqffxpdC5U/EQDQO-cy4_uAotrYHM5eRqX9O_T72i6u-ZLAVj8_C-dVIdwN",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQC4XEulxb05Le5gF6esMtDWT5XZ6tlzlMBQGNsqffxpdC5U/RVFDNFhFdWx4YjA1TGU1Z0Y2ZXNNdERXVDVYWjZ0bHpsTUJRR05zcWZmeHBkQzVV.webp",
+      "image_sha256": "763160c210585c7189d0298dc1262dc1eb59d84051b1ae8cbbef642d27c77cd7",
+      "animation_url": null
+    },
+    {
+      "slug": "heartlocket",
+      "name": "Heart Locket #1771",
+      "source_page": "https://getgems.io/collection/EQC4XEulxb05Le5gF6esMtDWT5XZ6tlzlMBQGNsqffxpdC5U/EQDQO-cy4_uAotrYHM5eRqX9O_T72i6u-ZLAVj8_C-dVIdwN",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQC4XEulxb05Le5gF6esMtDWT5XZ6tlzlMBQGNsqffxpdC5U/ca98c1f594a3a10e",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQC4XEulxb05Le5gF6esMtDWT5XZ6tlzlMBQGNsqffxpdC5U/a79d12e74c710a0c",
+      "image_sha256": "e76462ec9f925c940f3600a75b392700038b97f310caa4489aa03088bbe44999",
+      "animation_sha256": "2cfbadb089d427a6b3f6776a9cef410534c1048a597cedb2e1d7037c1f988a1c",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    },
+    {
+      "slug": "plushpepe-base",
+      "name": "Plush Pepe (unupgraded base artwork)",
+      "source_page": "https://getgems.io/collection/EQBG-g6ahkAUGWpefWbx-D_9sQ8oWbvy6puuq78U2c4NUDFS/EQBFZ0KNeiuKc1GvsSZ3hdwtTwQUtgMMPl82lXAK-gGu3yKu",
+      "provenance": "getgems_collection_customImage",
+      "minted_nft": false,
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/images/attrs/EQBG-g6ahkAUGWpefWbx-D_9sQ8oWbvy6puuq78U2c4NUDFS/RVFCRy1nNmFoa0FVR1dwZWZXYngtRF85c1E4b1didnk2cHV1cTc4VTJjNE5VREZT.webp",
+      "image_sha256": "fb2e76d0613add07fa2af5d3d38cdce45bfb24961c0b9bbbe119d3f288473a74",
+      "animation_url": null
+    },
+    {
+      "slug": "plushpepe",
+      "name": "Plush Pepe #2653",
+      "source_page": "https://getgems.io/collection/EQBG-g6ahkAUGWpefWbx-D_9sQ8oWbvy6puuq78U2c4NUDFS/EQBFZ0KNeiuKc1GvsSZ3hdwtTwQUtgMMPl82lXAK-gGu3yKu",
+      "image_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/images/EQBG-g6ahkAUGWpefWbx-D_9sQ8oWbvy6puuq78U2c4NUDFS/8b6f7a1760b9e448",
+      "animation_url": "https://ddejfvww7sqtk.cloudfront.net/nft-content-cache/lottie/EQBG-g6ahkAUGWpefWbx-D_9sQ8oWbvy6puuq78U2c4NUDFS/b29ac9eb5415500d",
+      "image_sha256": "644450c6a0546e6de19af52613256fe732f16e0bd085bbf26cea74604e4e1e67",
+      "animation_sha256": "36b2df592a64ec1c1e8a10268aff504aaa1ddfc30678439dea99133984dea08c",
+      "provenance": "getgems_page_embedded_asset_metadata",
+      "minted_nft": true
+    }
+  ],
+  "cases": "Cropped from 64064.jpg, 64065.jpg, 64068.jpg, 64069.jpg and 64070.jpg supplied by user",
+  "lottie_runtime": {
+    "name": "lottie-web",
+    "version": "5.12.2",
+    "source_page": "https://github.com/airbnb/lottie-web",
+    "download_url": "https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js",
+    "sha256": "a0757321f974527bda3cc2593bf56cc7ffe4578421249ced6ae49ffb1c529f90"
+  },
+  "limitations": [
+    "Ordinary standard gifts come from cdn.changes.tg, a third-party mirror, linked by the public catalog https://smmacc.com/product/buy-tg-stars-gifts. The four image files were decoded and visually checked, and the TGS/Lottie payloads parsed. Do not claim these have Getgems or first-party provenance.",
+    "Ordinary standard gifts and unupgraded base gift artwork are not actual minted NFTs. The six numbered upgraded examples are real collection items, but this asset download grants no ownership.",
+    "Getgems web-search open returned 403 for some item pages; shell fetch and its embedded __NEXT_DATA__ worked. Initial Python urllib calls to the mirror returned 403; curl with a browser User-Agent downloaded the exact files.",
+    "Fragment /gifts returned HTTP 403 in this environment."
+  ],
+  "restyle_v2": {
+    "catalog_snapshot": "2026-10-02T16:50:01+00:00",
+    "ordinary_gifts": 149,
+    "upgrade_collections": 117,
+    "regular_models": 7337,
+    "media_mirror": "https://github.com/ssamy2/TelegramGiftsAssests",
+    "repaired_original_media": "https://api.changes.tg/",
+    "format": "Original Telegram vector TGS in gzip/base64 wrappers, no AI redraw",
+    "attribute_weights": "Positive source rarity values normalized by each group total; crafted and zero weights excluded",
+    "virtual_number_basis": "Original Telegram gift supply from source snapshot; not a claim about real minted NFT numbers",
+    "getgems": {
+      "url": "https://getgems.io/",
+      "status": 403
+    },
+    "currencies": {
+      "stars": "https://raw.githubusercontent.com/Ajaxy/telegram-tt/master/src/assets/icons/star/GoldStarFill.svg",
+      "grams": "https://ton.org/assets/media/gram_diamond_mark.zip"
+    },
+    "case_artwork": "Existing artwork in user project, neutral border-connected background removed; no screenshot used as a card",
+    "inter": "https://rsms.me/inter/",
+    "supplied_currency_raster_files": "Local attachment paths were unavailable; original official assets used as fallback"
+  },
+  "crash_animations": {
+    "crash_rocket": {
+      "id": "5474226613807773923",
+      "name": "Astro Peach",
+      "weight": 300,
+      "source_rarity": 3.0,
+      "image": "./assets/models/stellar_rocket/astro_peach.webp",
+      "animation": "./assets/models/stellar_rocket/astro_peach.tgs",
+      "source": "https://github.com/ssamy2/TelegramGiftsAssests/blob/main/models/stellar_rocket/astro_peach.tgs",
+      "rotation": 45,
+      "compressed_animation_sha256": "b1344ef1dcbf4433374b95410bb4cf86431e480fddac73ba7af7fef825fcdc97",
+      "format": "original TGS/Lottie",
+      "source_kind": "Telegram original, public archive"
+    },
+    "crash_explosion": {
+      "name": "Telegram Collision",
+      "animation": "./assets/ui/telegram-explosion.tgs",
+      "image": "./assets/ui/telegram-explosion.webp",
+      "source": "https://github.com/saeedtahmtan/telemoji/blob/main/tgs/animated/U%2B1F4A5_1.tgs",
+      "compressed_animation_sha256": "9766547a01cee3a84488c8cb436728603df725bfd70746df9cdaf50ec547d8a3",
+      "format": "original TGS/Lottie",
+      "source_kind": "Telegram original, public archive"
+    }
+  },
+  "price_snapshot": {
+    "observed_at": "2026-10-02T19:07:27+00:00",
+    "retrieved_at": "2026-10-03T04:13:19.319519+00:00",
+    "source": "https://github.com/ssamy2/TelegramGiftsAssests/blob/main/gifts_api_response.json",
+    "sha256": "385e68d16f55b05008af3fb0e53e9979ed678940915f3a8368cab6c45e72e756",
+    "method": "payments.getStarGifts: stars / resell_min_stars",
+    "unconfirmed": [
+      "durovsglasses-nft",
+      "libertyfigure-nft"
+    ]
+  },
+  "crash_animation_alternative": {
+    "name": "Telegram Rocket emoji",
+    "path": "./assets/ui/telegram-rocket.tgs",
+    "source": "https://github.com/saeedtahmtan/telemoji/blob/main/tgs/animated/U%2B1F680_1.tgs",
+    "sha256": "8e29fb5e76c1e4b5932697911bafa38984cba84ec82a97209b230e404f631353"
+  },
+  "ordinary_pricing": {
+    "verified_bid_count": 0,
+    "fallback": "virtual ordinary value near collectible floor minus conversion fee; not an ordinary buyback bid",
+    "quotes_file": "tools/data/ordinary_buyback_quotes.json"
+  },
+  "supplied_design_assets": {
+    "./assets/promos/japan.png": "User supplied 02-96190.png; Games Japan banner",
+    "./assets/promos/cases.png": "User supplied 03-96181.png; Games Cases tile",
+    "./assets/promos/upgrades.png": "User supplied 04-96180.png; Games Upgrade tile",
+    "./assets/promos/crash.png": "User supplied 05-96179.png; Games Crash tile",
+    "./assets/promos/cases-banner.jpg": "User supplied 07-96201.jpg; Cases page banner"
+  }
+}
