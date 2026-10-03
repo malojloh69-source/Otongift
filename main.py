@@ -543,35 +543,41 @@ class Game:
                 units-=repaid
         db.execute(f"UPDATE users SET {col}={col}+? WHERE id=?", (units, uid))
 
-    def create_star_invoice(self, uid, amount, key, target_currency='stars'):
+    def create_gram_invoice(self, uid, amount, key):
+        units=amount_units(amount,1000000,80)
+        if units<800000:raise GameError('Минимум для пополнения — 0.8 GRAM')
+        xtr=int((Decimal(units)*Decimal(str(self.rate))/100000000).to_integral_value(rounding=ROUND_UP))
+        return self.create_star_invoice(uid,xtr,key,'grams',gram_units=units)
+
+    def create_star_invoice(self, uid, amount, key, target_currency='stars', gram_units=None):
         if not self.payments_enabled:raise GameError('Оплата Telegram Stars не настроена',503)
         xtr=integer(amount,1,100)
         target_currency=self.column(target_currency)
-        credit_units=xtr*10000 if target_currency=='stars' else int((Decimal(xtr*100)*1000000/self.rate).to_integral_value(rounding=ROUND_DOWN))
+        credit_units=xtr*10000 if target_currency=='stars' else (gram_units if gram_units is not None else int((Decimal(xtr*100)*1000000/self.rate).to_integral_value(rounding=ROUND_DOWN)))
         if not re.fullmatch(r'[a-zA-Z0-9_-]{8,80}',key or ''):
             raise GameError('Нужен ключ запроса')
         with self.db(write=True) as db:
             row=db.execute('SELECT * FROM star_orders WHERE user_id=? AND request_key=?',(uid,key)).fetchone()
-            if row and (row['xtr']!=xtr or row['target_currency']!=target_currency):raise GameError('Ключ платежа использован с другой суммой или валютой',409)
+            if row and (row['xtr']!=xtr or row['target_currency']!=target_currency or row['credit_units']!=credit_units):raise GameError('Ключ платежа использован с другой суммой или валютой',409)
             if not row:
                 oid=secrets.token_hex(16);payload='clezzy-starpay:'+oid
                 db.execute('INSERT INTO star_orders(id,user_id,request_key,xtr,payload,created,target_currency,credit_units) VALUES(?,?,?,?,?,?,?,?)',
                            (oid,uid,key,xtr,payload,self.clock(),target_currency,credit_units))
                 row=db.execute('SELECT * FROM star_orders WHERE id=?',(oid,)).fetchone()
             if row['invoice_url'] or row['status']!='pending':
-                return {'order_id':row['id'],'status':row['status'],'invoice_url':row['invoice_url'],'target_currency':row['target_currency'],'credit':row['credit_units']/(100 if row['target_currency']=='stars' else 1000000)}
+                return {'order_id':row['id'],'status':row['status'],'invoice_url':row['invoice_url'],'target_currency':row['target_currency'],'xtr':row['xtr'],'credit':row['credit_units']/(100 if row['target_currency']=='stars' else 1000000)}
         url=telegram_api(self.bot_token,'createInvoiceLink',{
             'title':'OtonGifts · игровой баланс',
             'description':f'{credit_units/(100 if target_currency=="stars" else 1000000):g} игровых {"Stars" if target_currency=="stars" else "GRAM"} за {xtr} Telegram Stars.',
             'payload':row['payload'],'currency':'XTR',
-            'prices':[{'label':'Игровые Stars','amount':xtr}],
+            'prices':[{'label':'Игровые Stars' if target_currency=='stars' else 'Игровой GRAM','amount':xtr}],
         })
         if not isinstance(url,str) or not url.startswith('https://t.me/'):
             raise GameError('Не удалось создать счёт Telegram',502)
         with self.db(write=True) as db:
             db.execute('UPDATE star_orders SET invoice_url=? WHERE id=? AND invoice_url IS NULL',(url,row['id']))
             saved=db.execute('SELECT * FROM star_orders WHERE id=?',(row['id'],)).fetchone()
-            return {'order_id':saved['id'],'status':saved['status'],'invoice_url':saved['invoice_url'],'target_currency':saved['target_currency'],'credit':saved['credit_units']/(100 if saved['target_currency']=='stars' else 1000000)}
+            return {'order_id':saved['id'],'status':saved['status'],'invoice_url':saved['invoice_url'],'target_currency':saved['target_currency'],'xtr':saved['xtr'],'credit':saved['credit_units']/(100 if saved['target_currency']=='stars' else 1000000)}
 
     def payment_status(self,uid,oid):
         with self.db() as db:
@@ -1281,6 +1287,9 @@ def handler_for(game: Game):
                     game.throttle("auth:" + self.client_address[0], limit=30)
                     return self.json_response(game.authenticate(p, self.token()))
                 uid = game.session_user(self.token())
+                if path=='/api/payments/grams/invoice':
+                    game.throttle(f'invoice:{uid}',limit=12,interval=60)
+                    return self.json_response(game.create_gram_invoice(uid,p.get('amount_grams'),self.headers.get('Idempotency-Key','')))
                 if path=='/api/payments/stars/invoice':
                     game.throttle(f'invoice:{uid}',limit=12,interval=60)
                     return self.json_response(game.create_star_invoice(uid,p.get('amount_xtr'),self.headers.get('Idempotency-Key',''),p.get('target_currency','stars')))
