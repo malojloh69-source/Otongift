@@ -13,7 +13,7 @@ SOURCE = 'https://github.com/ssamy2/TelegramGiftsAssests/blob/main/gifts_api_res
 
 
 def update(snapshot, observed_at):
-    catalog_path = ROOT / 'dist/catalog.json'
+    catalog_path = ROOT / 'public/catalog.json'
     catalog = json.loads(catalog_path.read_text())
     raw = snapshot.read_bytes()
     records = {str(r['id']): r for r in json.loads(raw)['star_gifts_full']['gifts']}

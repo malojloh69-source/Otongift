@@ -2,9 +2,9 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {webcrypto} from 'node:crypto';
-import {Demo} from '../dist/demo.js';
+import {Demo} from '../public/demo.js';
 globalThis.crypto ??= webcrypto;
-const catalog=JSON.parse(fs.readFileSync(new URL('../dist/catalog.json',import.meta.url)));
+const catalog=JSON.parse(fs.readFileSync(new URL('../public/catalog.json',import.meta.url)));
 const fund=d=>{d.data.stars=150000;d.data.grams=2500000;for(const id of ['rose','toybear','scaredcat'])d.addGift(id);d.save();return d;};
 const create=()=>{let data=null;return fund(new Demo(catalog,{getItem:()=>data,setItem:(_k,v)=>data=v},()=>1800000000));};
 

@@ -27,8 +27,11 @@ from urllib.parse import parse_qsl, unquote, urlsplit
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError, URLError
 
+from asset_store import AssetStore
+
 ROOT = Path(__file__).resolve().parent
-PUBLIC = ROOT / "dist"
+PUBLIC = ROOT / "public"
+ASSETS = AssetStore(PUBLIC)
 LOG = logging.getLogger("clezzy")
 WELCOME_BANNER = PUBLIC / "assets/promos/oton-welcome.png"
 WELCOME_CAPTION = (
@@ -1210,12 +1213,16 @@ def handler_for(game: Game):
                     return self.json_response({'url':app_url,'name':'OtonGifts','iconUrl':origin+'/assets/icons/app-icon.png'},cors=True)
                 if path.startswith("/api/"):
                     return self.json_response(game.read(game.session_user(self.token()), path))
-                requested = PUBLIC / unquote(path.lstrip("/") or "index.html")
+                relative = unquote(path.lstrip("/") or "index.html")
+                requested = PUBLIC / relative
                 requested = requested.resolve()
-                if not requested.is_relative_to(PUBLIC.resolve()) or not requested.is_file():
+                if not requested.is_relative_to(PUBLIC.resolve()) or relative.startswith("asset-packs/"):
                     raise GameError("Файл не найден", 404)
-                body = requested.read_bytes()
-                mime = mimetypes.guess_type(str(requested))[0] or "application/octet-stream"
+                try:
+                    body = ASSETS.read(relative)
+                except FileNotFoundError:
+                    raise GameError("Файл не найден", 404) from None
+                mime = mimetypes.guess_type(relative)[0] or "application/octet-stream"
                 self.write_headers(200, mime + ("; charset=utf-8" if mime.startswith("text/") else ""), len(body))
                 self.wfile.write(body)
             except GameError as e:

@@ -2,7 +2,7 @@
 """Import verified Telegram gift media; virtual edition ranges come from its gift snapshot."""
 from pathlib import Path
 import json,re,base64,gzip,shutil,hashlib,urllib.request
-ROOT=Path(__file__).resolve().parents[1];PUBLIC=ROOT/'dist';SOURCE='https://github.com/ssamy2/TelegramGiftsAssests'
+ROOT=Path(__file__).resolve().parents[1];PUBLIC=ROOT/'public';SOURCE='https://github.com/ssamy2/TelegramGiftsAssests'
 def slug(x):return re.sub('[^a-z0-9]','',x.lower())
 def weight(x):return max(0,round(float(x or 0)*100))
 def pack(source,rel):

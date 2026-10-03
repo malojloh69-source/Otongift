@@ -10,7 +10,7 @@ from datetime import datetime
 import json, math
 
 ROOT=Path(__file__).resolve().parents[1]
-CATALOG=ROOT/'dist/catalog.json'
+CATALOG=ROOT/'public/catalog.json'
 QUOTES=ROOT/'tools/data/ordinary_buyback_quotes.json'
 
 def update():

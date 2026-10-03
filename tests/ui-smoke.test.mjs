@@ -3,23 +3,23 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
-import {Demo} from '../dist/demo.js';
+import {Demo} from '../public/demo.js';
 import {createRequire} from 'node:module';
 import {webcrypto,createHash,createHmac} from 'node:crypto';
 const {parseHTML}=createRequire(import.meta.url)('linkedom');
 const root=new URL('../',import.meta.url);
-const lovePrice=JSON.parse(fs.readFileSync(new URL('dist/catalog.json',root),'utf8')).cases.find(c=>c.id==='love').price;
+const lovePrice=JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8')).cases.find(c=>c.id==='love').price;
 const html=fs.readFileSync(new URL('index.html',root),'utf8');
 async function until(condition){for(let i=0;i<1600;i++){if(await condition())return;await new Promise(r=>setTimeout(r,5));}throw Error('UI did not reach the expected state');}
 function memory(){const data=new Map();return {getItem:k=>data.get(k)||null,setItem:(k,v)=>data.set(k,v),data};}
 
 async function launch({portable=true,url='file:///Downloads/index.html',storage=memory(),insecure=false,blockedStorage=false,fetcher=null,telegram=null,motion=false,seeded=true}={}){
   if(seeded&&!blockedStorage&&!fetcher&&!url.startsWith('https:')&&!storage.getItem('clezzy-gifts-device-demo-v1')){
-    const c=JSON.parse(fs.readFileSync(new URL('dist/catalog.json',root),'utf8'));
+    const c=JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8'));
     const d=new Demo(c,storage);d.data.stars=150000;d.data.grams=2500000;
     for(const id of ['rose','toybear','scaredcat'])d.addGift(id);d.save();
   }
-  const source=portable?html:fs.readFileSync(new URL('dist/index.html',root),'utf8');
+  const source=portable?html:fs.readFileSync(new URL('public/index.html',root),'utf8');
   const {document,Event}=parseHTML(source);Object.defineProperty(document,'baseURI',{value:url});
   const registry=new Map(),requests=[],animationCalls=[];
   document.modelContext={registerTool:t=>registry.set(t.name,t)};
@@ -48,7 +48,7 @@ async function launch({portable=true,url='file:///Downloads/index.html',storage=
   const append=document.head.append.bind(document.head);document.head.append=(node)=>{append(node);if(node.tagName==='SCRIPT'&&node.src?.includes('/assets/')){const rel=node.src.slice(node.src.indexOf('/assets/'));try{vm.runInContext(fs.readFileSync(new URL('dist'+decodeURIComponent(rel),root),'utf8'),ctx);node.onload?.();}catch(error){node.onerror?.(error);}}};
   for(const script of document.querySelectorAll('script')){
     const component=script.getAttribute('data-component')||script.getAttribute('src')?.replace(/^\.\//,'');
-    const text=script.getAttribute('src')?fs.readFileSync(new URL('dist/'+component,root),'utf8'):script.textContent;
+    const text=script.getAttribute('src')?fs.readFileSync(new URL('public/'+component,root),'utf8'):script.textContent;
     new vm.Script(text,{filename:component||'inline.js'});
     if(component==='assets/lottie.min.js')continue;
     vm.runInContext(text,ctx,{filename:component||'inline.js'});
@@ -124,12 +124,12 @@ test('Crash NFT selector submits a collectible wager and shows the exact edition
 });
 
 test('nested dist HTML loads classic scripts and uses its own directory',async()=>{
-  const page=await launch({portable:false,url:'http://127.0.0.1:10643/projects/Clezzy_Gifts/dist/index.html'});try{
+  const page=await launch({portable:false,url:'http://127.0.0.1:10643/projects/Clezzy_Gifts/public/index.html'});try{
     assert.ok(page.ctx.ClezzyReady);assert.equal(page.document.querySelectorAll('.game-poster').length,4);
     assert.match(page.document.querySelector('.home-promo-image img').getAttribute('src'),/home-gifts\.png$/);
     await page.click('.bottom-nav [data-view="cases"]');assert.equal(page.document.querySelectorAll('.case-card').length,19);
     assert.match(page.document.querySelector('.cases-banner-photo img').getAttribute('src'),/cases-home\.jpg$/);
-    assert.deepEqual(page.requests,['http://127.0.0.1:10643/projects/Clezzy_Gifts/dist/api/health']);
+    assert.deepEqual(page.requests,['http://127.0.0.1:10643/projects/Clezzy_Gifts/public/api/health']);
     for(const script of page.document.querySelectorAll('script[src]')){assert.equal(script.getAttribute('type'),null);assert.match(script.getAttribute('src'),/^\.\//);}
   }finally{page.close();}
 });
@@ -184,14 +184,14 @@ test('a failing real server shows an error without silently entering the demo',a
   }finally{page.close();}
   const auth=await launch({portable:false,url:'https://game.example/index.html',fetcher:async path=>{
     if(path.endsWith('api/health'))return {ok:true,status:200,headers:{get:()=> 'application/json'},json:async()=>({ok:true,virtual_economy:true})};
-    if(path.endsWith('catalog.json'))return {ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('dist/catalog.json',root),'utf8'))};
+    if(path.endsWith('catalog.json'))return {ok:true,json:async()=>JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8'))};
     return {ok:false,status:401,json:async()=>({error:'Открой приложение в Telegram'})};
   }});try{assert.ok(!auth.ctx.ClezzyReady);assert.match(auth.document.querySelector('#app').textContent,/Открой приложение в Telegram/);assert.equal(auth.storage.data.size,0);}finally{auth.close();}
 });
 
 
 test('retry after two lost server responses reuses the pending operation key',async()=>{
-  const catalog=JSON.parse(fs.readFileSync(new URL('dist/catalog.json',root),'utf8'));
+  const catalog=JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8'));
   const backend=new Demo(catalog,memory()),keys=[];backend.data.stars=150000;backend.data.grams=2500000;backend.save();
   const response=body=>({ok:true,status:200,headers:{get:()=> 'application/json'},json:async()=>body});
   const page=await launch({portable:false,url:'http://127.0.0.1:8000/',fetcher:async(url,options)=>{

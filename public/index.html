@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="OtonGifts — кейсы, подарки, апгрейды и краш в Telegram.">
+  <title>OtonGifts</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%23090b10'/%3E%3Cpath fill='%23168bff' d='M24 7a17 17 0 1 0 0 34 17 17 0 0 0 0-34Zm0 9a8 8 0 1 1 0 16 8 8 0 0 1 0-16Z'/%3E%3C/svg%3E">
+  <style>body{margin:0;background:#030303;color:#f7f7fa;font-family:Inter,Arial,sans-serif}.boot{position:relative;min-height:100vh;min-height:100dvh;background:#030303;overflow:hidden}.boot-content{position:absolute;top:43%;left:50%;transform:translate(-50%,-50%);width:min(84vw,460px)}.boot-brand svg{display:block;width:100%;height:auto}.boot-brand span{display:block;text-align:center;font-size:clamp(15px,4vw,24px);white-space:nowrap}.boot-brand em{font-style:normal;color:#17baff}.boot-bottom{position:absolute;bottom:calc(45px + env(safe-area-inset-bottom,0px));left:0;right:0;display:grid;justify-items:center;gap:12px}.boot-spinner{width:49px;height:49px;border:6px solid #07334b;border-top-color:#02b7fc;border-right-color:#168bff;border-radius:50%;animation:oton-spin 1.05s linear infinite}.boot-bottom p{font-size:15px;color:#aaa}.boot-bottom small{font-size:12px;color:#4f4f4f}@keyframes oton-spin{to{transform:rotate(360deg)}}</style>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./theme.css">
+  <script defer src="./compat.js"></script>
+  <script defer src="./bootstrap.js"></script>
+  <script defer src="./catalog.js"></script>
+  <script defer src="./demo.browser.js"></script>
+  <script defer src="./assets/pako_inflate.min.js"></script>
+  <script defer src="./assets.js"></script>
+<script defer src="./assets/lottie.min.js"></script>
+<script defer src="./boot.js"></script>
+<script defer src="./crash.js"></script>
+<script defer src="./app.js"></script>
+</head>
+<body>
+  <div id="app"><div class="boot pepe-boot" role="status" aria-label="Загрузка OtonGifts"><div class="pepe-scene" aria-hidden="true"><div class="pepe-rope"></div><div class="pepe-figure pepe-left"></div><div class="pepe-figure pepe-main"></div><div class="pepe-figure pepe-right"></div></div><div class="pepe-skeleton" aria-hidden="true"><div class="skeleton-brand"></div><div class="skeleton-wallet"></div><div class="skeleton-banner"></div><div class="skeleton-cards"><i></i><i></i></div></div><div class="pepe-progress" aria-hidden="true"><span></span></div></div></div>
+  <noscript><div class="boot"><strong>Открой файл в браузере</strong><p>Для игр и анимаций нужен JavaScript. Используй браузер или HTML-просмотр с выполнением скриптов.</p></div></noscript>
+  <dialog id="modal" aria-label="Подарок"><div id="modal-content"></div></dialog>
+  <div id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>

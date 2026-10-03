@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "total_files": 15383,
+  "packs": [
+    {
+      "name": "pack-000.zip",
+      "files": 1791,
+      "bytes": 33051768
+    },
+    {
+      "name": "pack-001.zip",
+      "files": 1693,
+      "bytes": 32854803
+    },
+    {
+      "name": "pack-002.zip",
+      "files": 1860,
+      "bytes": 33117716
+    },
+    {
+      "name": "pack-003.zip",
+      "files": 1328,
+      "bytes": 32906926
+    },
+    {
+      "name": "pack-004.zip",
+      "files": 1458,
+      "bytes": 32618212
+    },
+    {
+      "name": "pack-005.zip",
+      "files": 1622,
+      "bytes": 32821234
+    },
+    {
+      "name": "pack-006.zip",
+      "files": 1536,
+      "bytes": 32583697
+    },
+    {
+      "name": "pack-007.zip",
+      "files": 1464,
+      "bytes": 33762996
+    },
+    {
+      "name": "pack-008.zip",
+      "files": 1750,
+      "bytes": 32920372
+    },
+    {
+      "name": "pack-009.zip",
+      "files": 881,
+      "bytes": 6111647
+    }
+  ]
+}

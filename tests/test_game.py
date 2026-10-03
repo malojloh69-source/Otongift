@@ -243,6 +243,16 @@ class GameTests(unittest.TestCase):
                 self.assertEqual(json.load(r)['state']['balance']['stars'], 0)
             with urlopen(base + '/assets/gifts/scaredcat-nft.json') as r:
                 self.assertIn('layers', json.load(r))
+            model = self.game.catalog['collections'][0]['models'][0]
+            with urlopen(base + '/' + model['image'].removeprefix('./')) as r:
+                self.assertEqual(r.headers.get_content_type(), 'image/webp')
+                self.assertEqual(r.read(4), b'RIFF')
+            with urlopen(base + '/' + model['animation'].removeprefix('./').replace('.tgs', '.asset.js')) as r:
+                self.assertEqual(r.status, 200)
+                self.assertTrue(r.read())
+            with self.assertRaises(HTTPError) as e:
+                urlopen(base + '/asset-packs/pack-000.zip')
+            self.assertEqual(e.exception.code, 404)
             with self.assertRaises(HTTPError) as e:
                 urlopen(base + '/%2e%2e/main.py')
             self.assertEqual(e.exception.code, 404)

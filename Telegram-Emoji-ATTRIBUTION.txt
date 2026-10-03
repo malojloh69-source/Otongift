@@ -2,15 +2,15 @@ Crash uses original Telegram animated media, without AI redrawing.
 
 Default rocket: Stellar Rocket, Astro Peach model.
 Original mirror: https://github.com/ssamy2/TelegramGiftsAssests/tree/main/models/stellar_rocket
-Local paths: dist/assets/models/stellar_rocket/astro_peach.webp, astro_peach.asset.js
+Local paths: public/assets/models/stellar_rocket/astro_peach.webp, astro_peach.asset.js
 
 Crash effect: Telegram Animated Emoji Collision (U+1F4A5).
 Archive: https://github.com/saeedtahmtan/telemoji
 Original TGS: tgs/animated/U+1F4A5_1.tgs
-Local paths: dist/assets/ui/telegram-explosion.tgs, .asset.js, .webp
+Local paths: public/assets/ui/telegram-explosion.tgs, .asset.js, .webp
 
 Also retained: original Telegram Rocket emoji (U+1F680), an alternative animation
-in dist/assets/ui/telegram-rocket.tgs, .asset.js and .webp.
+in public/assets/ui/telegram-rocket.tgs, .asset.js and .webp.
 The reference rocket uses the Astro Peach gift model, not this alternative emoji.
 TGS data is preserved. WebP previews are frames rendered from the original media.
 Existing Telegram Web A, Inter, Lottie and Pako license files are retained.
