@@ -65,6 +65,20 @@ body{background:#050505;color:#f7f7f7}
 .game-poster.game-cases img{object-position:center}
 
 .content-cases{padding-top:16px}
+.case-live{margin:0 0 15px;padding:7px 0 12px;background:#080808;overflow:hidden}
+.case-live-heading{display:flex;align-items:center;gap:7px;padding:0 2px 8px;font-size:11px;color:#aeb1bd}
+.case-live-heading strong{font-size:11px;font-weight:750;letter-spacing:.08em;color:#fff}
+.case-live-heading>span:last-child{margin-left:auto;color:#757d8b}
+.case-live-dot{width:7px;height:7px;border-radius:50%;background:#36dc91;box-shadow:0 0 10px #36dc9180}
+.case-live-track{display:flex;gap:10px;min-width:0;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scrollbar-width:none;padding:0 2px 2px}
+.case-live-track::-webkit-scrollbar{display:none}
+.case-live-card{flex:0 0 clamp(150px,27%,205px);min-width:0;scroll-snap-align:start;padding:4px 6px 7px;border:1px solid #242936;border-radius:16px;background:linear-gradient(145deg,#151922,#0b0c10);color:#fff}
+.case-live-name{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;font-weight:630;line-height:19px}
+.case-live-art{height:62px;display:grid;place-items:center}
+.case-live-art>img{display:block;width:66px;height:62px;object-fit:contain;filter:drop-shadow(0 4px 8px #0008)}
+.case-live-coin{font-size:43px;line-height:1}.case-live-coin .star-symbol,.case-live-coin .gram-symbol{width:48px!important;height:48px!important;max-width:48px;max-height:48px}
+.case-live-bottom{display:flex;align-items:center;gap:6px;min-width:0}.case-live-bottom>.avatar{width:26px;height:26px;min-width:26px;font-size:12px}.case-live-bottom>span:last-child{min-width:0;display:block}.case-live-bottom strong,.case-live-bottom small{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.25}.case-live-bottom strong{font-size:11px}.case-live-bottom small{font-size:10px;color:#9da4b5}
+.case-live-empty{display:grid;place-items:center;flex:1;min-height:112px;margin:0;border:1px dashed #323845;border-radius:15px;color:#929aa8;font-size:13px}
 .cases-banner-photo{margin:0 0 17px}
 .case-catalog{background:#1a1a1a;border:1px solid #292929;border-radius:30px;padding:22px;margin-bottom:24px}
 .case-group-tabs{display:grid;grid-template-columns:1fr 1fr;gap:4px;background:#222;border:1px solid #3a3a3a;border-radius:28px;padding:5px;margin-bottom:18px}
@@ -278,3 +292,4 @@ dialog.wallet-dialog-bridge::backdrop{display:none}
 .home-promo-image:before,.cases-banner-photo:before{display:none}
 .home-promo-image img,.cases-banner-photo img{position:static;inset:auto;width:100%;height:auto;aspect-ratio:auto;object-fit:contain;object-position:center;opacity:1}
 @media(max-width:560px){.home-promo-image,.cases-banner-photo{aspect-ratio:auto;min-height:0}}
+@media(max-width:560px){.content-cases .case-live{margin-left:-12px;margin-right:-12px;padding:8px 12px 12px}.case-live-card{flex-basis:clamp(145px,43vw,176px)}.case-live-track{gap:8px}.case-live-heading{padding-bottom:9px}}

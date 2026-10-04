@@ -68,6 +68,11 @@ class Demo {
     try {
       let result={};const currency=p.currency||'stars';
       if(['/api/me','/api/crash/state','/api/crash/room'].includes(path))return {state:await this.state()};
+      if(path==='/api/cases/live')return {items:this.data.history.filter(e=>e.kind==='case').slice(0,24).flatMap(e=>{
+        const d=e.details||{},gift_id=d.gift_id,reward=d.reward;
+        const prize=gift_id&&this.gifts.has(gift_id)?{type:'gift',gift_id}:reward&&['stars','grams'].includes(reward.currency)?{type:'currency',currency:reward.currency,amount:reward.amount}:null;
+        return prize?[{id:e.id,created:e.created,case_name:e.title,user:{first_name:this.data.user.first_name,photo_url:this.data.user.photo_url||''},prize}]:[];
+      })};
       if(path==='/api/admin/users')return {users:[{...this.data.user,...(await this.state()).balance}],audit:this.data.audit};
       if(path==='/api/cases/open'){
         const c=this.catalog.cases.find(c=>c.id===p.case_id);if(!c)throw Error('Кейс не найден');if(c.loot.some(x=>x.type!=='currency'&&this.gift(x.gift_id).collectible))throw Error('Кейс содержит недопустимый коллекционный приз');this.debit(this.units(c.price,currency),currency);

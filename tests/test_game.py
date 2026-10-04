@@ -48,6 +48,28 @@ class GameTests(unittest.TestCase):
         self.assertEqual(new['balance']['grams'], 0)
         self.assertEqual(new['inventory'], [])
 
+    def test_live_case_feed_contains_only_real_openings_and_player_avatar(self):
+        self.assertEqual(self.game.read(2,'/api/cases/live')['items'],[])
+        with self.game.db(write=True) as db:
+            self.game.upsert_user(db,{'id':2,'first_name':'Игрок <2>','photo_url':'https://example.com/avatar.jpg'})
+            self.game.log(db,2,'buy','Покупка подарка',-1)
+        case=self.game.cases['love'];original=case['loot']
+        try:
+            case['loot']=[{'gift_id':'heart','weight':10000}]
+            self.act('/api/cases/open',{'case_id':'love'},uid=2)
+            case['loot']=[{'type':'currency','amount_stars':20,'weight':10000}]
+            self.act('/api/cases/open',{'case_id':'love'},uid=1)
+        finally:
+            case['loot']=original
+        items=self.game.read(2,'/api/cases/live')['items']
+        self.assertEqual(len(items),2)
+        self.assertEqual(items[0]['user']['first_name'],'Admin')
+        self.assertEqual(items[0]['prize'],{'type':'currency','currency':'stars','amount':20})
+        self.assertEqual(items[1]['user'],{'first_name':'Игрок <2>','photo_url':'https://example.com/avatar.jpg'})
+        self.assertEqual(items[1]['prize'],{'type':'gift','gift_id':'heart'})
+        self.assertEqual(items[1]['case_name'],case['name'])
+        self.assertNotIn('proof',str(items))
+
     def test_gram_case_gift_keeps_currency_and_black_backdrop_raises_value(self):
         case=self.game.cases['love']
         original=case['loot']

@@ -178,6 +178,22 @@ test('promo, topup, admin, referrals and crash work through HTML forms',async()=
   }finally{page.close();}
 });
 
+test('cases rail shows only actual case openings with player avatar and prize',async()=>{
+  const page=await launch({portable:false,url:'file:///Downloads/index.html'});
+  try{
+    await page.click('.bottom-nav [data-view="cases"]');
+    assert.ok(page.document.querySelector('.case-live'));
+    await until(()=>page.document.querySelector('.case-live-empty'));
+    assert.equal(page.document.querySelectorAll('.case-live-card').length,0);
+    await page.registry.get('open_gift_case').execute({case_id:'love',currency:'stars'});
+    await until(()=>page.document.querySelectorAll('.case-live-card').length===1);
+    const card=page.document.querySelector('.case-live-card');
+    assert.match(card.textContent,/Демо-игрок/);
+    assert.ok(card.querySelector('.avatar'));
+    assert.ok(card.querySelector('.case-live-art img, .case-live-coin'));
+  }finally{page.close();}
+});
+
 test('live GRAM amount opens exact invoice review and wallet picker above sheet',async()=>{
   const catalog=JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8'));
   const backend=new Demo(catalog,memory());

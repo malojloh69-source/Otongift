@@ -265,6 +265,7 @@ class Game:
                   currency TEXT NOT NULL DEFAULT 'stars', details TEXT NOT NULL DEFAULT '{}',
                   created REAL NOT NULL);
                 CREATE INDEX IF NOT EXISTS idx_events_user_created ON events(user_id,id DESC);
+                CREATE INDEX IF NOT EXISTS idx_events_kind_id ON events(kind,id DESC);
                 CREATE TABLE IF NOT EXISTS requests(
                   user_id INTEGER NOT NULL REFERENCES users(id), key TEXT NOT NULL,
                   fingerprint TEXT NOT NULL, response TEXT NOT NULL, created REAL NOT NULL,
@@ -701,7 +702,7 @@ class Game:
                     else:gift = self.add_gift(db, uid, loot["gift_id"], currency)
                     break
             db.execute("UPDATE users SET cases_opened=cases_opened+1 WHERE id=?", (uid,))
-            self.log(db, uid, "case", case["name"], -self.price_units(case["price"],currency)/(100 if currency=='stars' else 1000000), currency, details={"gift_id": gift['gift_id'] if gift else None, "gift":gift, "reward":reward,"proof": proof})
+            self.log(db, uid, "case", case["name"], -self.price_units(case["price"],currency)/(100 if currency=='stars' else 1000000), currency, details={"case_id":case['id'],"gift_id": gift['gift_id'] if gift else None, "gift":gift, "reward":reward,"proof": proof})
             ev = sum((x['amount_stars'] if x.get('type')=='currency' else self.gifts[x['gift_id']]['price'])*x['weight'] for x in case['loot'])/10000
             self.referral_margin(db, uid, int((case["price"] - ev) * 100))
             return {"gift": gift, "reward":reward, "proof": proof}
@@ -1139,10 +1140,32 @@ class Game:
             r["proof"] = {"server_seed": row["seed"], "commitment": r["commitment"], "message": row["client_seed"], "crash": row["crash"] / 100}
         return r
 
+    def case_live(self, db):
+        rows=db.execute("""SELECT e.id,e.title,e.details,e.created,u.first_name,u.photo_url
+                           FROM events e JOIN users u ON u.id=e.user_id
+                           WHERE e.kind='case' ORDER BY e.id DESC LIMIT 24""").fetchall()
+        items=[]
+        for row in rows:
+            details=json.loads(row['details'])
+            gift_id=details.get('gift_id')
+            reward=details.get('reward')
+            if gift_id in self.gifts:
+                prize={'type':'gift','gift_id':gift_id}
+            elif isinstance(reward,dict) and reward.get('currency') in ('stars','grams'):
+                prize={'type':'currency','currency':reward['currency'],'amount':reward.get('amount',0)}
+            else:
+                continue
+            items.append({'id':row['id'],'created':row['created'],'case_name':row['title'],
+                          'user':{'first_name':row['first_name'],'photo_url':row['photo_url']},'prize':prize})
+        return items
+
     def read(self, uid, path):
         self.throttle(f"read:{uid}", limit=600)
         if path.startswith('/api/payments/stars/order/'):
             return self.payment_status(uid,path.rsplit('/',1)[-1])
+        if path == '/api/cases/live':
+            with self.db() as db:
+                return {'items':self.case_live(db)}
         if path in {"/api/me", "/api/crash/state", "/api/crash/room"}:
             with self.db(write=True) as db:
                 return {"state": self.state(db, uid)}
