@@ -37,6 +37,7 @@ def build():
  theme=theme.replace('./assets/ui/pepe-loading.png',data_url(PUBLIC/'assets/ui/pepe-loading.png'))
  html=html.replace('<link rel="stylesheet" href="./style.css">','<style>'+css+'</style>')
  html=html.replace('<link rel="stylesheet" href="./theme.css">','<style>'+theme+'</style>')
+ html=html.replace('<link rel="stylesheet" href="./glass.css">','<style>'+(PUBLIC/'glass.css').read_text()+'</style>')
  payload={'catalog':offline,'animations':{},'assetData':packed,'imageData':images,'standalone':True,'assetBase':'./public/'}
  for name in ('compat.js','bootstrap.js','catalog.js','demo.browser.js','assets/pako_inflate.min.js','assets.js','assets/lottie.min.js','boot.js','crash.js','app.js'):
   source='globalThis.ClezzyEmbedded='+script_json(payload)+';' if name=='catalog.js' else (PUBLIC/name).read_text()
