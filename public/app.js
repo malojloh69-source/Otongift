@@ -89,7 +89,7 @@ function adminPage(){if(!state.admin)return '<div class="error-block">Досту
 
 function showModal(html){modalRun++;modal.classList.toggle('case-dialog',html.includes('class="case-view"'));modalContent.innerHTML=html;cleanAnimations();if(!modal.open)modal.showModal();mountAnimations(modalContent);return modalRun;}
 const modalHead=title=>`<div class="modal-head"><h2>${esc(title)}</h2><button class="close-button" data-action="close-modal" aria-label="Закрыть">${icon('close')}</button></div>`;
-function closeModal(){modalRun++;try{ClezzyPlatform.storage().setItem('clezzy-last-result','null');}catch{}modal.close();modalContent.innerHTML='';cleanAnimations();}
+function closeModal(){modalRun++;try{ClezzyPlatform.storage().setItem('clezzy-last-result','null');}catch{}modal.close();modal.classList.remove('wallet-dialog-bridge');modalContent.innerHTML='';cleanAnimations();}
 function casePrize(loot){const units=Math.ceil(loot.amount_stars*1e6/catalog.stars_per_gram);return {currency,amount:currency==='stars'?loot.amount_stars:units/1e6};}
 function caseChoice(loot){return loot.type==='currency'?{reward:casePrize(loot)}:{g:gifts.get(loot.gift_id),item:null};}
 function caseTile(choice){
@@ -120,10 +120,12 @@ async function openCase(id){
 function resultModal(item,proof,label='ПОДАРОК ПОЛУЧЕН'){const g=gifts.get(item.gift_id),a=giftMeta(g,item);lastProof=proof||lastProof;showModal(`${modalHead('Подарок твой!')}<p class="result-title">${label}</p><div class="result-gift">${giftArt(g,item)}</div><div class="result-name"><h2>${esc(g.name)}</h2><p>${g.collectible?esc(a.model.name)+' · #'+item.number:g.upgrade_to?'Можно улучшить за '+catalog.upgrade_cost+' Stars':'Обычный подарок'}</p><p style="margin-top:12px;color:var(--blue);font-size:18px;font-weight:650">${itemPrice(g,item)}</p></div>${priceNote(g)}<div class="result-actions"><button class="primary" data-action="result-inventory">В инвентарь</button><button class="secondary" data-action="item-sell" data-id="${item.id}">Продать</button></div>${proof?'<button class="text-button full" style="margin-top:16px" data-action="last-proof">Проверить выпадение</button>':''}`);}
 function giftDetail(id,fromCatalog=false){const item=fromCatalog?null:state.inventory.find(i=>i.id===Number(id)),g=fromCatalog?gifts.get(id):item?gifts.get(item.gift_id):null;if(!g)return;const a=giftMeta(g,item),c=collections.get(g.collection_id);showModal(`${modalHead(g.name)}<div class="result-gift">${giftArt(g,item)}</div><div class="result-name"><h2>${itemPrice(g,item)}</h2><p>${g.collectible?(item?'Коллекционный подарок #'+item.number:'Пример модели коллекции'):g.upgrade_to?'Можно улучшить':'Обычный подарок'}</p></div>${g.collectible?`<div class="gift-details"><div><small>Модель</small><strong>${esc(a.model.name)}</strong></div><div><small>Фон</small><strong>${esc(a.backdrop.name)}</strong></div><div><small>Узор</small><strong>${esc(a.symbol.name)}</strong></div></div>`:''}${item?.value_stars>g.price?`<p class="price-origin">Фон ${esc(a.backdrop?.name||'')}: игровая оценка +${String(item.attributes?.backdrop)==='49'?25:15}%. Это не котировка Getgems.</p>`:''}${item?`<div class="stack">${g.upgrade_to?`<button class="primary full" data-action="item-collectible" data-id="${item.id}">${icon('upgrade')} Улучшить за ${catalog.upgrade_cost} ${star}</button><p class="hint" style="text-align:center">Случайная модель из ${c?.models.length||0} вариантов коллекции</p>`:''}${!isDeviceDemo?`<button class="secondary full" data-action="item-transfer" data-id="${item.id}">Передать игроку</button>`:''}<div class="result-actions"><button class="secondary" data-action="item-use" data-id="${item.id}">В апгрейд</button><button class="secondary" data-action="item-sell" data-id="${item.id}">Продать</button></div></div>`:`${g.collectible?'<p class="hint" style="text-align:center;margin-top:15px">Коллекционные модели доступны через улучшение подарков.</p>':`<button class="primary full" data-action="shop-buy" data-id="${g.id}">Купить за ${itemPrice(g,null)}</button>`}`}${priceNote(g)}<p class="modal-warning">Виртуальный подарок и игровые Stars. Вывода в Telegram нет.</p><a class="text-button full" style="display:block;text-align:center;margin-top:8px" href="${esc(item?.attributes?.source||g.source_page)}" target="_blank" rel="noopener">Источник оригинальных материалов</a>`);}
 function proofModal(proof){if(!proof){toast('Сыграй раунд, чтобы проверить результат');return;}showModal(`${modalHead('Проверка случайности')}<p class="hint">Сравни SHA-256(server seed) с хешем, опубликованным до игры. Затем вычисли HMAC-SHA256(seed, message).</p><div class="proof"><strong>Commitment</strong><br>${esc(proof.commitment)}<br><br><strong>Server seed</strong><br>${esc(proof.server_seed||'Откроется после завершения раунда')}<br><br><strong>Message</strong><br>${esc(proof.message||'')}<br><br>${proof.digest?'<strong>Digest</strong><br>'+esc(proof.digest)+'<br><br>':''}${proof.roll!==undefined?'Roll: '+proof.roll+' / 10000':proof.crash?'Crash: '+proof.crash+'x':''}</div><button class="secondary full" data-action="copy-proof">Копировать данные</button><p class="modal-warning">Проверка показывает соответствие результата опубликованному seed. Она не является независимым аудитом оператора.</p>`);lastProof=proof;}
-let topupCurrency='stars';
+let topupCurrency='stars',pendingPayment=null;
+const topupDraft={stars:'',grams:''};
 function topup(){
  const test=state.demo,enabled=state.payments_enabled;
- showModal(`${modalHead('Пополнение')}<div class="topup-sheet"><div class="topup-handle"></div><div class="topup-methods" aria-label="Валюта пополнения"><button data-action="topup-method" data-currency="grams" aria-pressed="${topupCurrency==='grams'}" class="${topupCurrency==='grams'?'active':''}"><span class="topup-method-icon">${gram}</span><span><strong>GRAM</strong><small>Игровой баланс</small></span></button><button data-action="topup-method" data-currency="stars" aria-pressed="${topupCurrency==='stars'}" class="${topupCurrency==='stars'?'active':''}"><span class="topup-method-icon">${star}</span><span><strong>Telegram Stars</strong><small>Игровой баланс</small></span></button></div><label class="topup-entry"><span>${test?'Сумма игровых '+(topupCurrency==='stars'?'Stars':'GRAM'):'Сумма к оплате · Telegram Stars'}</span><input id="topup-value" type="number" inputmode="decimal" min="${test?'0.01':'1'}" max="${test?(topupCurrency==='stars'?'10000':'80'):'100'}" step="${test?(topupCurrency==='stars'?'1':'0.000001'):'1'}" placeholder="Введите сумму" value="${test?(topupCurrency==='stars'?'500':'1.3'):''}"></label><p class="topup-preview" id="topup-preview"></p><button class="primary full topup-submit" id="topup-confirm" data-action="topup-confirm">Пополнить</button><p class="topup-disclosure">${test?'Демо: реальные деньги не списываются.':'Оплата через счёт Telegram Stars. Начисление только после подтверждения ботом.'}</p><div class="wallet-connect"><div><strong>Подключить TON кошелёк</strong><p class="hint" id="wallet-state">Подключение показывает адрес. Перевод из кошелька не пополняет игровой баланс.</p></div><button class="secondary" data-action="wallet-connect">Подключить</button></div>${!test&&!enabled?'<p class="hint">Владелец бота ещё не включил приём Telegram Stars.</p>':''}</div>`);
+ const grams=topupCurrency==='grams';
+ showModal(`${modalHead('Пополнение')}<div class="topup-sheet"><div class="topup-handle"></div><div class="topup-methods" aria-label="Валюта пополнения"><button data-action="topup-method" data-currency="grams" aria-pressed="${grams}" class="${grams?'active':''}"><span class="topup-method-icon">${gram}</span><span><strong>GRAM</strong><small>Игровой баланс</small></span></button><button data-action="topup-method" data-currency="stars" aria-pressed="${!grams}" class="${!grams?'active':''}"><span class="topup-method-icon">${star}</span><span><strong>Telegram Stars</strong><small>Игровой баланс</small></span></button></div><label class="topup-entry"><span>${grams?'Количество игрового GRAM':test?'Количество игровых Stars':'Сумма к оплате · Telegram Stars'}</span><input id="topup-value" type="number" inputmode="decimal" min="${grams?(test?'0.01':'0.8'):(test?'1':'1')}" max="${grams?'80':test?'10000':'100'}" step="${grams?'0.000001':'1'}" placeholder="Введите сумму" value="${esc(topupDraft[topupCurrency]||(test?(grams?'1.3':'500'):''))}"></label><p class="topup-preview" id="topup-preview"></p><button class="primary full topup-submit" id="topup-confirm" data-action="topup-confirm">Пополнить</button><p class="topup-disclosure">${test?'Демо: реальные деньги не списываются.':grams?'Игровой GRAM начисляется после подтверждения оплаты ботом.':'Оплата через счёт Telegram Stars. Начисление после подтверждения ботом.'}</p>${grams?`<div class="wallet-connect"><div><strong>Подключить TON кошелёк</strong><p class="hint" id="wallet-state">Подключение показывает адрес. Перевод из кошелька не пополняет игровой баланс.</p></div><button class="secondary" data-action="wallet-connect">Подключить</button></div>`:''}${!test&&!enabled?'<p class="hint">Приём платежей пока недоступен.</p>':''}</div>`);
  updateTopupForm();
  const wallet=tonUI?.wallet?.account?.address;
  if(wallet)$('#wallet-state',modalContent).textContent='Подключено: '+wallet.slice(0,8)+'…'+wallet.slice(-6);
@@ -131,16 +133,24 @@ function topup(){
 function updateTopupForm(){
  const input=$('#topup-value',modalContent),button=$('#topup-confirm',modalContent),preview=$('#topup-preview',modalContent);
  if(!input||!button)return;
- const test=state.demo,amount=Number(input.value),valid=input.value!==''&&Number.isFinite(amount)&&amount>0&&(test?amount<=(topupCurrency==='stars'?10000:80):Number.isInteger(amount)&&amount<=100);
- const credit=test?amount:topupCurrency==='stars'?amount*100:Math.floor(amount*100/catalog.stars_per_gram*1e6)/1e6;
- preview.textContent=valid?(test?'Будет начислено ':'За '+num(amount,0)+' Telegram Stars будет начислено ')+num(credit,topupCurrency==='grams'?6:0)+' игровых '+(topupCurrency==='stars'?'Stars':'GRAM'):'Минимум 1 Telegram Star';
+ const test=state.demo,grams=topupCurrency==='grams',amount=Number(input.value);
+ const valid=input.value!==''&&Number.isFinite(amount)&&amount>0&&(grams?amount<=(test?80:80)&&Number.isInteger(amount*1000000)&&amount>=(test?0.01:0.8):Number.isInteger(amount)&&amount<=(test?10000:100)&&amount>=1);
+ const credit=test||grams?amount:amount*100;
+ preview.textContent=valid?(test||grams?'Будет начислено ':'За '+num(amount,0)+' Telegram Stars будет начислено ')+num(credit,grams?6:0)+' игровых '+(grams?'GRAM':'Stars'):grams?'От 0,8 до 80 GRAM':'Минимум 1 Telegram Star';
  button.disabled=!valid||(!test&&!state.payments_enabled);
- button.textContent=test?'Получить '+(valid?num(credit,topupCurrency==='grams'?6:0):'')+' '+(topupCurrency==='stars'?'Stars':'GRAM'):'Пополнить '+(topupCurrency==='stars'?'Stars':'GRAM');
+ button.textContent=test?'Получить '+(valid?num(credit,grams?6:0):'')+' '+(grams?'GRAM':'Stars'):grams?'Продолжить с GRAM':'Пополнить Stars';
  button.dataset.amount=valid?String(amount):'';button.dataset.currency=topupCurrency;
 }
-async function completeStarPayment(xtr,targetCurrency){
+function reviewGramPayment(amount){
+ const units=Math.round(amount*1000000),xtr=Math.ceil(units*catalog.stars_per_gram/100000000);
+ pendingPayment={amount:units/1000000,xtr};
+ showModal(`${modalHead('Подтверждение')}<div class="topup-sheet topup-review"><div class="topup-handle"></div><p>На игровой баланс поступит</p><strong class="topup-review-amount">${num(pendingPayment.amount,6)} ${gram} GRAM</strong><div class="topup-review-price"><span>К оплате через Telegram</span><strong>${num(xtr,0)} ${star} Stars</strong></div><p class="hint">Это покупка виртуального игрового GRAM. Перевод через TON кошелёк здесь не принимается.</p><p class="topup-preview" id="topup-preview"></p><button class="primary full topup-submit" data-action="topup-pay">Оплатить ${num(xtr,0)} ${star}</button><button class="secondary full" data-action="topup-back">Назад</button></div>`);
+}
+async function completeTelegramPayment(amount,targetCurrency){
  if(!state.payments_enabled||state.demo)throw Error('Платежи не настроены');
- const invoice=await api('/api/payments/stars/invoice',{amount_xtr:Number(xtr),target_currency:targetCurrency});
+ const grams=targetCurrency==='grams',expectedXtr=grams?Math.ceil(Math.round(amount*1000000)*catalog.stars_per_gram/100000000):amount;
+ const invoice=grams?await api('/api/payments/grams/invoice',{amount_grams:amount}):await api('/api/payments/stars/invoice',{amount_xtr:Number(amount),target_currency:'stars'});
+ if(invoice.xtr!==expectedXtr||grams&&Math.abs(invoice.credit-amount)>0.0000001)throw Error('Цена счёта изменилась. Открой пополнение заново.');
  if(invoice.status==='paid'){await api('/api/me');closeModal();render();toast('Баланс уже начислен');return;}
  if(!invoice.invoice_url)throw Error('Счёт Telegram недоступен');
  if(tg?.openInvoice)tg.openInvoice(invoice.invoice_url,()=>{});else window.open(invoice.invoice_url,'_blank','noopener,noreferrer');
@@ -151,19 +161,24 @@ async function completeStarPayment(xtr,targetCurrency){
   if(order.status==='paid'){await api('/api/me');closeModal();render();toast('Начислено '+num(invoice.credit,targetCurrency==='grams'?6:0)+' игровых '+(targetCurrency==='stars'?'Stars':'GRAM'));return;}
   if(order.status==='refunded')throw Error('Платёж возвращён');
  }
- const button=$('#topup-confirm');if(button)button.disabled=false;
+ const button=$('[data-action="topup-pay"]')||$('#topup-confirm');if(button)button.disabled=false;
  toast('Счёт ожидает оплаты. Баланс обновится после подтверждения.');
 }
 
 let tonUI=null;
+function restoreWalletSheet(){if(!modal.classList.contains('wallet-dialog-bridge'))return;modal.close();modal.classList.remove('wallet-dialog-bridge');if(modalContent.querySelector('.topup-sheet'))modal.showModal();}
 async function connectWallet(){
  if(isDeviceDemo||location.protocol!=='https:')throw Error('Подключение кошелька доступно на HTTPS Mini App');
  if(!tonUI){
   if(!window.TON_CONNECT_UI){await new Promise((resolve,reject)=>{const s=document.createElement('script');s.src='https://unpkg.com/@tonconnect/ui@3.0.2/dist/tonconnect-ui.min.js';s.onload=resolve;s.onerror=()=>reject(Error('Не удалось загрузить TON Connect'));document.head.append(s);});}
   tonUI=new window.TON_CONNECT_UI.TonConnectUI({manifestUrl:location.origin+'/tonconnect-manifest.json'});
   tonUI.onStatusChange(wallet=>{const el=$('#wallet-state');if(el)el.textContent=wallet?.account?.address?'Подключено: '+wallet.account.address.slice(0,8)+'…'+wallet.account.address.slice(-6):'Кошелёк не подключён';});
+  tonUI.onModalStateChange(info=>{if(info.status==='closed')restoreWalletSheet();});
  }
- await tonUI.openModal();
+ // A modal <dialog> occupies the browser top layer and hides the SDK portal.
+ // Keep the sheet visible as a fixed non-modal dialog while the wallet picker is open.
+ if(modal.open){modal.close();modal.classList.add('wallet-dialog-bridge');modal.show();}
+ try{await tonUI.openModal();}catch(error){restoreWalletSheet();throw error;}
 }
 function navigate(v){if(!titles[v])return;if(v==='admin'&&!state.admin){toast('Доступ только для администратора');return;}view=v;if(v==='admin')adminUnlocked=true;try{history.replaceState(null,'','#'+v);}catch{}render();window.scrollTo({top:0,behavior:'auto'});}
 function chooseTarget(multiplier){const source=state.inventory.find(i=>i.id===selectedSource);if(!source){toast('Сначала выбери свой подарок');return;}const price=source.value_stars??gifts.get(source.gift_id).price;const choices=catalog.gifts.filter(g=>!g.collectible&&g.price>price).sort((a,b)=>Math.abs(a.price-price*multiplier)-Math.abs(b.price-price*multiplier));selectedTarget=choices[0]?.id||null;render();}
@@ -198,7 +213,9 @@ document.addEventListener('click',async event=>{
       case'sell-all-confirm':b.disabled=true;await api('/api/inventory/sell',{item_ids:state.inventory.map(i=>i.id),currency:'stars'});closeModal();render();toast('Подарки проданы');break;
       case'topup':topup();break;
       case'topup-method':topupCurrency=b.dataset.currency;topup();break;
-      case'topup-confirm':b.disabled=true;if(state.demo){await api('/api/demo/topup',{amount:Number(b.dataset.amount),currency:b.dataset.currency});closeModal();render();toast('Тестовый баланс пополнен');}else await completeStarPayment(Number(b.dataset.amount),b.dataset.currency);break;
+      case'topup-confirm':b.disabled=true;if(state.demo){await api('/api/demo/topup',{amount:Number(b.dataset.amount),currency:b.dataset.currency});closeModal();render();toast('Тестовый баланс пополнен');}else if(b.dataset.currency==='grams')reviewGramPayment(Number(b.dataset.amount));else await completeTelegramPayment(Number(b.dataset.amount),'stars');break;
+      case'topup-pay':b.disabled=true;await completeTelegramPayment(pendingPayment.amount,'grams');break;
+      case'topup-back':topup();break;
       case'wallet-connect':await connectWallet();break;
       case'upgrade-tab':upgradeTab=b.dataset.tab;render();break;
       case'pick-source':upgradeTab='mine';render();$('.catalog-tabs')?.scrollIntoView({behavior:'smooth',block:'center'});break;
@@ -230,7 +247,7 @@ document.addEventListener('click',async event=>{
     }
   }catch(error){toast(error.message||'Не удалось выполнить операцию');if(b.isConnected)b.disabled=false;}
 });
-document.addEventListener('input',event=>{if(event.target.id==='topup-value')updateTopupForm();if(event.target.id==='crash-stake')ClezzyCrash.stakeChanged();if(event.target.id==='crash-auto')ClezzyCrash.autoChanged();if(event.target.id==='shop-search'){shopSearch=event.target.value;shopLimit=24;$('#shop-grid').innerHTML=shopCards();mountAnimations($('#shop-grid'));}if(event.target.id==='case-search'){search=event.target.value;$('#case-grid').innerHTML=caseCards(visibleCases());}});
+document.addEventListener('input',event=>{if(event.target.id==='topup-value'){topupDraft[topupCurrency]=event.target.value;updateTopupForm();}if(event.target.id==='crash-stake')ClezzyCrash.stakeChanged();if(event.target.id==='crash-auto')ClezzyCrash.autoChanged();if(event.target.id==='shop-search'){shopSearch=event.target.value;shopLimit=24;$('#shop-grid').innerHTML=shopCards();mountAnimations($('#shop-grid'));}if(event.target.id==='case-search'){search=event.target.value;$('#case-grid').innerHTML=caseCards(visibleCases());}});
 document.addEventListener('change',event=>{if(event.target.id==='crash-options-currency')ClezzyCrash.optionCurrency(event.target);if(event.target.id==='grant-kind'){const gift=event.target.value==='gift';$('#grant-gift').hidden=!gift;$('#grant-amount').hidden=gift;}});
 document.addEventListener('submit',async event=>{event.preventDefault();const f=event.target,p=Object.fromEntries(new FormData(f)),button=$('[type="submit"]',f);if(button?.disabled)return;if(button)button.disabled=true;try{
   if(f.id==='promo-form'){const r=await api('/api/promo/redeem',p);if(r.open_admin){navigate('admin');toast(isDeviceDemo?'Открыта тестовая админ-панель':'Доступ администратора подтверждён');}else{render();toast('Получено '+num(r.reward)+' Stars');}}
