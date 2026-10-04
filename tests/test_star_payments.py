@@ -74,4 +74,18 @@ class PaymentTests(unittest.TestCase):
         self.assertEqual(self.game.read(51,'/api/me')['state']['balance']['grams'],0)
         self.assertEqual(self.game.payment_status(51,order['order_id'])['status'],'refunded')
 
+    def test_requested_gram_amount_is_exact_and_idempotent(self):
+        with patch('main.telegram_api',return_value='https://t.me/$gram') as send:
+            order=self.game.create_gram_invoice(51,1.234567,'exact-gram-request-123')
+            self.assertEqual(order['xtr'],2)
+            self.assertEqual(order['credit'],1.234567)
+            self.assertEqual(send.call_args.args[2]['prices'][0]['amount'],2)
+            repeat=self.game.create_gram_invoice(51,1.234567,'exact-gram-request-123')
+        self.assertEqual(repeat['order_id'],order['order_id'])
+        with self.assertRaises(GameError):self.game.create_gram_invoice(51,1.234568,'exact-gram-request-123')
+        with self.game.db() as db:payload=db.execute('SELECT payload FROM star_orders WHERE id=?',(order['order_id'],)).fetchone()[0]
+        self.game.handle_payment_update(self.receipt(payload,charge='exact-gram-charge-123'))
+        self.assertEqual(self.game.read(51,'/api/me')['state']['balance']['grams'],1.234567)
+        with self.assertRaises(GameError):self.game.create_gram_invoice(51,0.799999,'too-small-gram-123')
+
 if __name__=='__main__':unittest.main()

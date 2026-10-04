@@ -25,7 +25,7 @@ async function launch({portable=true,url='file:///Downloads/index.html',storage=
   document.modelContext={registerTool:t=>registry.set(t.name,t)};
   const dialog=document.querySelector('#modal');
   Object.defineProperty(dialog,'open',{get:()=>dialog.hasAttribute('open')});
-  dialog.showModal=()=>dialog.setAttribute('open','');dialog.close=()=>dialog.removeAttribute('open');
+  dialog.showModal=()=>{dialog.setAttribute('open','');dialog.dataset.mode='modal';};dialog.show=()=>{dialog.setAttribute('open','');dialog.dataset.mode='nonmodal';};dialog.close=()=>dialog.removeAttribute('open');
   dialog.getBoundingClientRect=()=>({left:0,top:0,right:360,bottom:700});
   document.execCommand=()=>true;
   const where=new URL(url),location={href:url,origin:where.origin,protocol:where.protocol,search:where.search,hash:where.hash,reload(){}};
@@ -65,7 +65,7 @@ async function launch({portable=true,url='file:///Downloads/index.html',storage=
     }
     form.dispatchEvent(new Event('submit',{bubbles:true,cancelable:true}));await new Promise(r=>setTimeout(r,15));
   };
-  return {ctx,document,registry,requests,animationCalls,storage,click,submit,read:()=>registry.get('read_gift_inventory').execute({}),close:()=>{for(const timer of timers)clearTimeout(timer);}};
+  return {ctx,document,Event,registry,requests,animationCalls,storage,click,submit,read:()=>registry.get('read_gift_inventory').execute({}),close:()=>{for(const timer of timers)clearTimeout(timer);}};
 }
 
 test('standalone HTML boots offline with all images embedded',async()=>{
@@ -175,6 +175,55 @@ test('promo, topup, admin, referrals and crash work through HTML forms',async()=
     await page.click('.bottom-nav [data-view="referrals"]');await page.submit('#referral-form',{code:'MYGIFTS'});assert.equal(page.document.querySelector('#referral-form input').value,'MYGIFTS');
     await page.click('.bottom-nav [data-view="games"]');await page.click('.game-crash');await page.submit('#crash-form',{stake:'25',auto:'1.1'});
     assert.equal((await page.read()).balance.stars,2525);assert.ok(page.document.querySelector('#crash-multiplier'));assert.equal(page.document.querySelector('#crash-bet-button').disabled,true);assert.equal(page.document.querySelectorAll('.crash-player').length,1);
+  }finally{page.close();}
+});
+
+test('live GRAM amount opens exact invoice review and wallet picker above sheet',async()=>{
+  const catalog=JSON.parse(fs.readFileSync(new URL('public/catalog.json',root),'utf8'));
+  const backend=new Demo(catalog,memory());
+  const state=await backend.state();state.demo=false;state.payments_enabled=true;
+  const requests=[];
+  const response=body=>({ok:true,status:200,headers:{get:()=> 'application/json'},json:async()=>body});
+  const page=await launch({portable:false,url:'https://game.example/',fetcher:async(url,options)=>{
+    const path=new URL(url).pathname;
+    if(path==='/api/health')return response({ok:true,virtual_economy:true});
+    if(path==='/catalog.json')return response(catalog);
+    if(path==='/api/auth')return response({token:'live-session',state});
+    if(path==='/api/payments/grams/invoice'){
+      const body=JSON.parse(options.body);requests.push({path,body});
+      return response({order_id:'gram-order',status:'pending',invoice_url:'https://t.me/$gram',xtr:2,credit:1.234567});
+    }
+    if(path==='/api/payments/stars/order/gram-order')return response({status:'paid'});
+    if(path==='/api/me')return response({state:{...state,balance:{...state.balance,grams:1.234567}}});
+    throw Error('Unexpected '+path);
+  }});
+  try{
+    const dialog=page.document.querySelector('#modal');
+    await page.click('[data-action="topup"]');await page.click('[data-action="topup-method"][data-currency="grams"]');
+    const sheet=page.document.querySelector('.topup-sheet');
+    assert.match(sheet.textContent,/Количество игрового GRAM/);
+    assert.doesNotMatch(sheet.querySelector('.topup-entry').textContent,/Stars/);
+    const input=page.document.querySelector('#topup-value');input.value='1.234567';
+    input.dispatchEvent(new page.Event('input',{bubbles:true}));
+    await page.click('[data-action="topup-confirm"]');
+    assert.match(page.document.querySelector('.topup-review-price').textContent,/2.*Stars/);
+    await page.click('[data-action="topup-back"]');
+    assert.equal(page.document.querySelector('#topup-value').value,'1.234567');
+    let modalState;
+    page.ctx.TON_CONNECT_UI={TonConnectUI:class{
+      onStatusChange(){}onModalStateChange(cb){modalState=cb;}
+      async openModal(){modalState({status:'opened'});}
+    }};
+    await page.click('[data-action="wallet-connect"]');
+    assert.equal(dialog.dataset.mode,'nonmodal');assert.ok(dialog.classList.contains('wallet-dialog-bridge'));
+    modalState({status:'closed'});
+    assert.equal(dialog.dataset.mode,'modal');assert.ok(!dialog.classList.contains('wallet-dialog-bridge'));
+    await page.click('[data-action="topup-confirm"]');
+    await page.click('[data-action="topup-pay"]');
+    await until(()=>requests.length===1);
+    assert.deepEqual(requests,[{path:'/api/payments/grams/invoice',body:{amount_grams:1.234567}}]);
+    await until(()=>!dialog.open);
+    assert.equal((await page.read()).balance.grams,1.234567);
   }finally{page.close();}
 });
 
