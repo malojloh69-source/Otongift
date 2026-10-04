@@ -499,3 +499,92 @@ dialog.case-dialog { background: #080d16; border-color: #ffffff1a; backdrop-filt
 @media (hover: none) {
   .case-card:hover, .game-poster:hover { transform: none; box-shadow: var(--glass-shadow); border-color: var(--border); }
 }
+
+/* Brief composited transitions, without restarting animations on balance updates. */
+.content.page-enter { animation: page-settle 170ms ease-out both; }
+@keyframes page-settle { from { opacity: .6; transform: translate3d(0,4px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
+.segmented button, .chip, .stake-currency button, .profile-tabs button {
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+.case-grid, .gift-grid, .games-grid { align-items: stretch; }
+.case-card, .gift-card, .game-poster, .case-info, .gift-caption,
+.profile-balances > *, .inventory-tools > *, .crash-player-user > div { min-width: 0; }
+.case-info h3, .gift-caption > strong { overflow-wrap: anywhere; }
+.roulette-track { will-change: transform; }
+.roulette-tile { will-change: auto; contain: layout style; }
+.roulette-tile .gift-art { contain: layout paint; }
+.crash-player { contain: layout style; }
+
+/* All round text shares one circle. Only the rocket and icon controls sit outside. */
+.crash-hud { left: auto; right: 13px; gap: 5px; }
+.crash-hud button { margin-left: 0; width: 29px; height: 29px; padding: 6px; }
+.crash-orbit {
+  position: absolute; left: 50%; top: 52%; width: 180px; height: 180px; z-index: 3;
+  transform: translate3d(-50%,-50%,0);
+  transition: transform 260ms cubic-bezier(.2,.7,.2,1);
+}
+.crash-orbit > svg { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke-width: 3; transform: rotate(-90deg); }
+.crash-orbit .countdown-track { stroke: #263348; }
+.crash-orbit .countdown-progress { stroke: var(--accent); stroke-linecap: round; stroke-dasharray: 301.593; stroke-dashoffset: calc(301.593 * (1 - var(--countdown,1))); }
+.crash-orbit-copy {
+  position: absolute; inset: 28px 22px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 10px; text-align: center;
+}
+.crash-orbit-status { display: flex; align-items: center; justify-content: center; gap: 5px; max-width: 100%; color: #94a7c2; font-size: 10px; line-height: 13px; white-space: nowrap; }
+.crash-orbit-status .crash-connection { width: 5px; height: 5px; flex: none; }
+.crash-orbit .crash-countdown, .crash-orbit .crash-live, .crash-orbit .crash-end {
+  position: static; inset: auto; width: auto; height: auto; transform: none;
+  margin: 0; gap: 7px; justify-content: center; align-items: center; animation: none;
+}
+.crash-orbit .crash-countdown { display: grid; }
+.crash-orbit .crash-countdown strong { font-size: 46px; line-height: 1; letter-spacing: -.03em; }
+.crash-orbit .crash-countdown > span, .crash-orbit .crash-end > span, .crash-orbit #crash-time { color: #94a7c2; font-size: 11px; line-height: 14px; white-space: nowrap; }
+.crash-orbit .crash-live, .crash-orbit .crash-end { display: none; }
+.crash-space[data-phase="waiting"] .crash-orbit .crash-countdown { display: grid; }
+.crash-space[data-phase="running"] .crash-orbit .crash-countdown,
+.crash-space[data-phase="crashed"] .crash-orbit .crash-countdown { display: none; }
+.crash-space[data-phase="running"] .crash-orbit .crash-live,
+.crash-space[data-phase="crashed"] .crash-orbit .crash-end { display: grid; animation: none; }
+.crash-orbit #crash-multiplier, .crash-orbit .crash-end strong {
+  display: flex; align-items: baseline; justify-content: center; gap: 3px;
+  min-width: 0; padding: 0; border: 0; border-radius: 0; background: none;
+  box-shadow: none; opacity: 1; color: #e5f3ff; font-size: 40px; font-weight: 550; line-height: 1.1; letter-spacing: -.035em;
+}
+.crash-orbit .multiplier-value { font-size: inherit; font-weight: inherit; letter-spacing: inherit; }
+.crash-orbit #crash-multiplier .multiplier-unit, .crash-orbit .crash-end .multiplier-unit { font-size: .43em; font-weight: 500; letter-spacing: 0; color: #79bfff; }
+.crash-orbit[data-wide="true"] #crash-multiplier, .crash-orbit[data-wide="true"] .crash-end strong { font-size: 28px; }
+.crash-space[data-phase="running"] .crash-orbit { transform: translate3d(calc(-50% + 80px),-50%,0); }
+.crash-space .crash-flight { left: calc(50% - 105px); top: 52%; z-index: 2; }
+.crash-space .crash-rocket { width: 150px; height: 150px; }
+.crash-space .crash-explosion { left: calc(50% - 90px); top: 52%; z-index: 1; }
+.crash-space[data-phase="crashed"] .crash-orbit .countdown-progress { stroke: #78bfff; }
+
+@media (max-width: 800px) {
+  .user-strip { backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+  .bottom-nav:before, .bottom-nav button[data-view="games"] { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); }
+  dialog { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+  dialog::backdrop, dialog:has(.topup-sheet)::backdrop { backdrop-filter: blur(3px); }
+  .crash-orbit { width: 164px; height: 164px; }
+  .crash-orbit-copy { inset: 25px 18px; gap: 8px; }
+  .crash-orbit #crash-multiplier, .crash-orbit .crash-end strong { font-size: 36px; }
+  .crash-space[data-phase="running"] .crash-orbit { transform: translate3d(calc(-50% + 62px),-50%,0); }
+  .crash-space .crash-flight { left: calc(50% - 88px); }
+  .crash-space .crash-rocket { width: 112px; height: 112px; }
+}
+@media (max-width: 359px) {
+  .crash-orbit { width: 144px; height: 144px; }
+  .crash-orbit-copy { inset: 20px 13px; gap: 7px; }
+  .crash-orbit-status { font-size: 9px; gap: 4px; }
+  .crash-orbit .crash-countdown strong { font-size: 40px; }
+  .crash-orbit #crash-multiplier, .crash-orbit .crash-end strong { font-size: 32px; }
+  .crash-orbit[data-wide="true"] #crash-multiplier, .crash-orbit[data-wide="true"] .crash-end strong { font-size: 24px; }
+  .crash-space[data-phase="running"] .crash-orbit { transform: translate3d(calc(-50% + 58px),-50%,0); }
+  .crash-space .crash-flight { left: calc(50% - 82px); }
+  .crash-space .crash-rocket { width: 96px; height: 96px; }
+}
+.light-device .games-overlap { backdrop-filter: none; -webkit-backdrop-filter: none; }
+.light-device .crash-stars i { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .content.page-enter { animation: none; }
+  .crash-orbit, .segmented button, .chip, .stake-currency button, .profile-tabs button { transition: none; }
+}

@@ -103,6 +103,43 @@ test('new mini app starts at zero and shows GRAM in profile',async()=>{
   }finally{page.close();}
 });
 
+test('Crash updates the payout without replacing player rows or button artwork',async()=>{
+  const page=await launch({portable:false});try{
+    await page.click('.bottom-nav [data-view="games"]');await page.click('.game-crash');
+    vm.runInContext(`const wager={id:'ui-wager',currency:'stars',stake:25,auto:0,status:'active',user:state.user,payout:50};
+      const time=Date.now()/1000;state.crash={...state.crash,phase:'running',starts_at:time-1,server_time:time,multiplier:2,mine:wager,bets:[wager]};
+      ClezzyCrash.accept(null,state.crash);ClezzyCrash.paint();`,page.ctx);
+    const row=page.document.querySelector('.crash-player'),art=page.document.querySelector('#crash-bet-button .currency-icon');
+    assert.ok(row);assert.ok(art);
+    vm.runInContext(`const previous=state.crash;const nextWager={...previous.mine,payout:62.5};
+      state={...state,crash:{...previous,server_time:previous.server_time+.5,multiplier:2.5,mine:nextWager,bets:[nextWager]}};
+      ClezzyCrash.accept(previous,state.crash);ClezzyCrash.paint();`,page.ctx);
+    await until(()=>row.querySelector('.current-factor').textContent==='2.50');
+    assert.equal(page.document.querySelector('.crash-player'),row);
+    assert.equal(page.document.querySelector('#crash-bet-button .currency-icon'),art);
+    assert.match(row.querySelector('.current-return').textContent,/62,5/);
+    for(const id of ['crash-countdown-value','crash-label','crash-multiplier','crash-time','crash-end-value'])assert.ok(page.document.getElementById(id).closest('.crash-orbit'));
+    let ticks=0;page.ctx.ClezzyCrash.tick=()=>ticks++;
+    await page.click('.bottom-nav [data-view="cases"]');const before=ticks;
+    await new Promise(resolve=>setTimeout(resolve,120));assert.equal(ticks,before);
+  }finally{page.close();}
+});
+
+test('large inventories keep a bounded animation pool and prioritize the open gift',async()=>{
+  const page=await launch({motion:true});try{
+    vm.runInContext(`const original=state.inventory[0];state.inventory=Array.from({length:30},(_,i)=>({...original,id:9000+i}));navigate('profile');`,page.ctx);
+    await until(()=>page.animationCalls.length>=4);
+    assert.ok(vm.runInContext('animations.size<=7',page.ctx));
+    assert.equal(vm.runInContext('[...animationNodes.values()].filter(info=>info.playing).length',page.ctx),4);
+    await page.click('[data-action="gift-detail"][data-id="9000"]');
+    await until(()=>page.animationCalls.some(options=>page.document.querySelector('#modal-content').contains(options.container)));
+    assert.ok(vm.runInContext('animations.size<=7',page.ctx));
+    assert.equal(vm.runInContext('[...animationNodes.values()].filter(info=>info.playing).length',page.ctx),1);
+    await page.click('[data-action="close-modal"]');
+    await until(()=>vm.runInContext('[...animationNodes.values()].filter(info=>info.playing).length',page.ctx)===4);
+  }finally{page.close();}
+});
+
 test('Crash NFT selector submits a collectible wager and shows the exact edition',async()=>{
   const page=await launch({motion:true});try{
     await page.click('.bottom-nav [data-view="profile"]');
