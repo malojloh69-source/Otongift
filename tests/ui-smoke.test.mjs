@@ -199,6 +199,7 @@ test('live GRAM amount opens exact invoice review and wallet picker above sheet'
   }});
   try{
     const dialog=page.document.querySelector('#modal');
+    page.ctx.open=()=>({});
     await page.click('[data-action="topup"]');await page.click('[data-action="topup-method"][data-currency="grams"]');
     const sheet=page.document.querySelector('.topup-sheet');
     assert.match(sheet.textContent,/Количество игрового GRAM/);
