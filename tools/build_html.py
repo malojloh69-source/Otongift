@@ -38,6 +38,8 @@ def build():
  html=html.replace('<link rel="stylesheet" href="./style.css">','<style>'+css+'</style>')
  html=html.replace('<link rel="stylesheet" href="./theme.css">','<style>'+theme+'</style>')
  html=html.replace('<link rel="stylesheet" href="./glass.css">','<style>'+(PUBLIC/'glass.css').read_text()+'</style>')
+ blue=(PUBLIC/'blue-night.css').read_text().replace('./assets/models/plush_pepe/aqua_plush.webp',data_url(PUBLIC/'assets/models/plush_pepe/aqua_plush.webp'))
+ html=html.replace('<link rel="stylesheet" href="./blue-night.css">','<style>'+blue+'</style>')
  payload={'catalog':offline,'animations':{},'assetData':packed,'imageData':images,'standalone':True,'assetBase':'./public/'}
  for name in ('compat.js','bootstrap.js','catalog.js','demo.browser.js','assets/pako_inflate.min.js','assets.js','assets/lottie.min.js','boot.js','crash.js','app.js'):
   source='globalThis.ClezzyEmbedded='+script_json(payload)+';' if name=='catalog.js' else (PUBLIC/name).read_text()
